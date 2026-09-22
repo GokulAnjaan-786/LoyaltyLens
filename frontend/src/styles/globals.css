@@ -1,0 +1,57 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
+@import 'leaflet/dist/leaflet.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #021425;
+  color: #d2e4fc;
+  overflow-x: hidden;
+}
+
+/* Material Design Ambient Glows and Glassmorphism */
+.glow-cyan {
+  box-shadow: 0 0 20px -3px rgba(68, 221, 254, 0.25);
+}
+
+.glow-primary {
+  box-shadow: 0 0 24px -2px rgba(59, 144, 255, 0.35);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px -3px rgba(239, 68, 68, 0.2);
+}
+
+.glass-panel {
+  background: rgba(10, 29, 46, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(65, 71, 84, 0.4);
+}
+
+/* Custom Scrollbar for Dark Surface */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #000f1f;
+}
+::-webkit-scrollbar-thumb {
+  background: #1a2b3d;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #414754;
+}

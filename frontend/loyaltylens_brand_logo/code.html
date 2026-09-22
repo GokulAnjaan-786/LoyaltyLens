@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 240 54" fill="none">
+  <defs>
+    <linearGradient id="ll-grad1" x1="4" y1="4" x2="44" y2="44" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#1687FF"/>
+      <stop offset="50%" stop-color="#18C8E8"/>
+      <stop offset="100%" stop-color="#20D6B5"/>
+    </linearGradient>
+    <linearGradient id="ll-grad2" x1="16" y1="16" x2="36" y2="36" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#20D6B5"/>
+      <stop offset="100%" stop-color="#6EF3C5"/>
+    </linearGradient>
+    <filter id="ll-glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+  <!-- Modern Lens & Prediction Reticle Mark -->
+  <g transform="translate(6, 3)">
+    <circle cx="24" cy="24" r="21" stroke="url(#ll-grad1)" stroke-width="3" stroke-linecap="round" stroke-dasharray="100 24"/>
+    <circle cx="24" cy="24" r="13" stroke="#1687FF" stroke-width="2.5" stroke-opacity="0.8"/>
+    <!-- Dynamic Iris / Retention Target Focus -->
+    <path d="M24 16 L24 20 M24 28 L24 32 M16 24 L20 24 M28 24 L32 24" stroke="#18C8E8" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="24" cy="24" r="4.5" fill="url(#ll-grad2)"/>
+    <!-- Precision Satellite Dot -->
+    <circle cx="39" cy="11" r="3.5" fill="#6EF3C5"/>
+  </g>
+  <!-- Brand Typography -->
+  <text x="64" y="31" font-family="'Manrope', 'Inter', -apple-system, sans-serif" font-size="23" font-weight="800" letter-spacing="-0.03em" fill="#071A2B">Loyalty<tspan fill="#1687FF">Lens</tspan></text>
+  <text x="65" y="44" font-family="'Inter', sans-serif" font-size="8.5" font-weight="600" letter-spacing="0.14em" fill="#64748B">RETENTION INTELLIGENCE</text>
+</svg>

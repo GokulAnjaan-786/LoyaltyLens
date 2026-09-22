@@ -1,0 +1,30 @@
+# Dependency directories
+node_modules/
+frontend/node_modules/
+
+# Build outputs
+.next/
+frontend/.next/
+dist/
+build/
+
+# Python / Pycache
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Environment and secrets
+.env
+.env.local
+*.env
+
+# SQLite databases
+*.db
+*.sqlite
+*.sqlite3
+loyaltylens.db
+
+# System files
+.DS_Store
+Thumbs.db

@@ -1,0 +1,790 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Apex Logistics (CUST001) - Customer Intelligence | LoyaltyLens</title>
+<!-- Google Fonts: Manrope, Inter, JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;family=JetBrains+Mono:wght@400;500;600&amp;family=Manrope:wght@500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS with Forms & Container Queries -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Config Token Injection -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "tertiary": "#d0bcff",
+            "on-secondary-fixed-variant": "#004e5c",
+            "on-primary-fixed": "#001b3d",
+            "on-primary-container": "#002957",
+            "error": "#ffb4ab",
+            "on-background": "#d2e4fc",
+            "on-error-container": "#ffdad6",
+            "secondary-container": "#00c1e1",
+            "secondary": "#44ddfe",
+            "surface-variant": "#253648",
+            "primary-fixed-dim": "#a9c7ff",
+            "on-secondary": "#003640",
+            "background": "#021425",
+            "on-surface": "#d2e4fc",
+            "outline": "#8b919f",
+            "tertiary-fixed-dim": "#d0bcff",
+            "surface-container-high": "#1a2b3d",
+            "surface-container-lowest": "#000f1f",
+            "inverse-primary": "#005db6",
+            "primary": "#a9c7ff",
+            "surface-container": "#0f2132",
+            "on-tertiary": "#3c0091",
+            "error-container": "#93000a",
+            "on-error": "#690005",
+            "primary-container": "#3b90ff",
+            "on-tertiary-container": "#340080",
+            "surface": "#021425",
+            "surface-dim": "#021425",
+            "primary-fixed": "#d6e3ff",
+            "tertiary-container": "#a078ff",
+            "inverse-surface": "#d2e4fc",
+            "inverse-on-surface": "#203244",
+            "surface-tint": "#a9c7ff",
+            "on-surface-variant": "#c0c6d6",
+            "on-tertiary-fixed": "#23005c",
+            "surface-bright": "#293b4d",
+            "on-secondary-fixed": "#001f26",
+            "on-primary": "#003063",
+            "secondary-fixed": "#abedff",
+            "on-primary-fixed-variant": "#00468b",
+            "tertiary-fixed": "#e9ddff",
+            "on-secondary-container": "#004a58",
+            "outline-variant": "#414754",
+            "on-tertiary-fixed-variant": "#5516be",
+            "surface-container-highest": "#253648",
+            "secondary-fixed-dim": "#3bd8f8",
+            "surface-container-low": "#0a1d2e"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "full": "9999px"
+          },
+          "spacing": {
+            "space-xs": "0.25rem",
+            "space-sm": "0.5rem",
+            "space-md": "0.75rem",
+            "space-lg": "1.25rem",
+            "space-xl": "2rem",
+            "gutter": "1rem",
+            "gutter-desktop": "1.5rem",
+            "margin": "1rem",
+            "margin-tablet": "1.5rem",
+            "margin-desktop": "2rem"
+          },
+          "fontFamily": {
+            "label-code": ["JetBrains Mono"],
+            "display-lg-mobile": ["Manrope"],
+            "body-md": ["Inter"],
+            "label-caps": ["Inter"],
+            "headline-xl": ["Manrope"],
+            "headline-xl-mobile": ["Manrope"],
+            "data-metric": ["JetBrains Mono"],
+            "body-sm": ["Inter"],
+            "headline-lg": ["Manrope"],
+            "body-lg": ["Inter"],
+            "headline-md": ["Manrope"],
+            "display-lg": ["Manrope"]
+          },
+          "fontSize": {
+            "label-code": ["12px", { "lineHeight": "16px", "letterSpacing": "-0.01em", "fontWeight": "500" }],
+            "display-lg-mobile": ["30px", { "lineHeight": "38px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["13px", { "lineHeight": "20px", "letterSpacing": "0em", "fontWeight": "400" }],
+            "label-caps": ["11px", { "lineHeight": "14px", "letterSpacing": "0.06em", "fontWeight": "600" }],
+            "headline-xl": ["28px", { "lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "headline-xl-mobile": ["22px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "data-metric": ["24px", { "lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600" }],
+            "body-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.005em", "fontWeight": "400" }],
+            "headline-lg": ["20px", { "lineHeight": "28px", "letterSpacing": "-0.015em", "fontWeight": "600" }],
+            "body-lg": ["15px", { "lineHeight": "24px", "letterSpacing": "-0.005em", "fontWeight": "400" }],
+            "headline-md": ["16px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "display-lg": ["40px", { "lineHeight": "48px", "letterSpacing": "-0.025em", "fontWeight": "700" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-family: 'Material Symbols Outlined';
+      font-weight: normal;
+      font-style: normal;
+      font-size: 20px;
+      line-height: 1;
+      letter-spacing: normal;
+      text-transform: none;
+      display: inline-block;
+      white-space: nowrap;
+      word-wrap: normal;
+      direction: ltr;
+      -webkit-font-feature-settings: 'liga';
+      -webkit-font-smoothing: antialiased;
+    }
+    /* Custom scrollbar for dense enterprise view */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #021425;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #1a2b3d;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #253648;
+    }
+  </style>
+</head>
+<body class="bg-surface text-on-surface antialiased flex min-h-screen selection:bg-primary-container selection:text-white">
+<!-- ========================================================================= -->
+<!-- SHARED COMPONENT: SideNavBar (Strict Authority from JSON)                 -->
+<!-- ========================================================================= -->
+<aside class="fixed top-0 left-0 h-screen w-60 z-40 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between p-space-md">
+<!-- Header Logo & Identity -->
+<div class="space-y-space-lg">
+<div class="flex items-center gap-space-sm px-space-xs pt-space-xs">
+<img alt="LoyaltyLens Enterprise Logo mark" class="h-8 w-auto object-contain flex-shrink-0" src="https://lh3.googleusercontent.com/aida/AEtjO1XmSntGMGRyDxe0Y6cCWj6CipAYTYIThksUDeHwTc1ayUdj8id9P5xVDoGYEEXQzELCEJxjAMZW_R4cYOth_rePHlrqj9XmEoSpVwofJXH7KyeQ_KD5KgFCLUUOUjVjXER9EFHaWCYsL1onIkT1mEMbIQWnOe0V8LSsfgAtnKVahNcRDAfCPlq7qA9K0wuQwtOjb5Xb6jfgAZ1MQV5JMQVxpziaOZogQDZcx_ACfUw5nwwWXFRNYemBYtw"/>
+<div class="flex flex-col min-w-0">
+<span class="text-headline-md font-headline-md font-bold text-on-surface tracking-tight truncate leading-tight">LoyaltyLens</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant/70 text-[10px] tracking-wide truncate">Enterprise Retention Intelligence</span>
+</div>
+</div>
+<!-- Quick Action CTA -->
+<button class="w-full flex items-center justify-center gap-space-xs py-space-sm px-space-md rounded-lg bg-surface-container-high border border-outline-variant/40 hover:border-primary/50 text-primary transition-all duration-150 active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">add_circle</span>
+<span class="text-body-sm font-body-sm font-medium">New Cohort Analysis</span>
+</button>
+<!-- Main Navigation Items (Active: Customers) -->
+<nav aria-label="Main Navigation" class="space-y-1">
+<!-- 1. Dashboard -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="text-body-sm font-body-sm">Dashboard</span>
+</a>
+<!-- 2. Customers (ACTIVE) -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-surface-container-high text-primary border-l-2 border-primary font-medium transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">group</span>
+<span class="text-body-sm font-body-sm font-semibold">Customers</span>
+</a>
+<!-- 3. Analytics -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">analytics</span>
+<span class="text-body-sm font-body-sm">Analytics</span>
+</a>
+<!-- 4. Retention -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">autorenew</span>
+<span class="text-body-sm font-body-sm">Retention</span>
+</a>
+<!-- 5. Campaigns -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">campaign</span>
+<span class="text-body-sm font-body-sm">Campaigns</span>
+</a>
+<!-- 6. Simulator -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">tune</span>
+<span class="text-body-sm font-body-sm">Simulator</span>
+</a>
+<!-- 7. AI Insights -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-body-sm font-body-sm">AI Insights</span>
+</a>
+<!-- 8. Data Upload -->
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors duration-150 ease-out active:scale-[0.98]" href="#">
+<span class="material-symbols-outlined">cloud_upload</span>
+<span class="text-body-sm font-body-sm">Data Upload</span>
+</a>
+</nav>
+</div>
+<!-- Footer Utility Links -->
+<div class="pt-space-md border-t border-outline-variant/20 space-y-1">
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">settings</span>
+<span class="text-body-sm font-body-sm">Settings</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">person</span>
+<span class="text-body-sm font-body-sm">Profile</span>
+</a>
+<a class="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-error/80 hover:text-error hover:bg-error-container/20 transition-colors" href="#">
+<span class="material-symbols-outlined text-[18px]">logout</span>
+<span class="text-body-sm font-body-sm">Logout</span>
+</a>
+</div>
+</aside>
+<!-- ========================================================================= -->
+<!-- MAIN WORKSPACE CONTAINER (Offset by 60 / 240px)                           -->
+<!-- ========================================================================= -->
+<div class="flex-1 flex flex-col min-w-0 pl-60">
+<!-- ===================================================================== -->
+<!-- SHARED COMPONENT: TopNavBar (Strict Authority from JSON)              -->
+<!-- ===================================================================== -->
+<header class="sticky top-0 z-30 h-16 w-full bg-surface-container-low/95 backdrop-blur-md border-b border-outline-variant/30 flex items-center justify-between px-gutter-desktop shadow-[0_1px_2px_rgba(0,15,31,0.4)]">
+<!-- Left: Breadcrumb Navigation & Global Search -->
+<div class="flex items-center gap-space-lg flex-1 max-w-2xl">
+<!-- Context Breadcrumbs -->
+<div class="flex items-center gap-space-xs text-body-sm font-body-sm whitespace-nowrap">
+<span class="text-on-surface-variant">LoyaltyLens</span>
+<span class="text-outline-variant">/</span>
+<a class="text-on-surface-variant hover:text-primary transition-colors" href="#">Customers</a>
+<span class="text-outline-variant">/</span>
+<span class="text-on-surface font-semibold flex items-center gap-1.5">
+            Apex Logistics
+            <span class="px-1.5 py-0.5 rounded text-[10px] font-label-code bg-surface-container-high text-primary border border-outline-variant/30">CUST001</span>
+</span>
+</div>
+<!-- Global Search Bar -->
+<div class="relative w-72">
+<span class="material-symbols-outlined absolute left-2.5 top-1/2 -translate-y-1/2 text-outline-variant text-[18px]">search</span>
+<input class="w-full bg-surface-container-lowest text-body-sm font-body-sm text-on-surface pl-8 pr-3 py-1.5 rounded-lg border border-outline-variant/40 focus:border-primary-container focus:ring-1 focus:ring-primary-container focus:outline-none transition-all placeholder:text-outline/70" placeholder="Search cohorts, customers..." type="text"/>
+</div>
+</div>
+<!-- Right: Org Selector, Action, Alerts & User Profile -->
+<div class="flex items-center gap-space-md">
+<!-- Secondary Action: Org Selector -->
+<div class="flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/30 text-body-sm font-body-sm text-on-surface">
+<span class="w-2 h-2 rounded-full bg-secondary"></span>
+<span class="font-medium">Acme Corp</span>
+<span class="material-symbols-outlined text-[16px] text-outline-variant">expand_more</span>
+</div>
+<!-- Primary Header Action -->
+<button class="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-fixed font-medium text-body-sm font-body-sm shadow-[0_2px_8px_rgba(59,144,255,0.35)] transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[16px]">bolt</span>
+<span>Reactivate Cohort</span>
+</button>
+<!-- Trailing Icon Actions -->
+<div class="flex items-center gap-1 border-l border-outline-variant/30 pl-space-md">
+<button class="relative p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors" title="Notifications">
+<span class="material-symbols-outlined text-[20px]">notifications</span>
+<span class="absolute top-1.5 right-1.5 w-2 h-2 rounded-full bg-error ring-2 ring-surface-container-low"></span>
+</button>
+<button class="p-2 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container-high/50 transition-colors" title="Help &amp; Documentation">
+<span class="material-symbols-outlined text-[20px]">help_outline</span>
+</button>
+</div>
+<!-- User Portrait & Identity -->
+<div class="flex items-center gap-2 pl-space-xs border-l border-outline-variant/30">
+<img class="w-8 h-8 rounded-full border border-outline-variant/40 object-cover" data-alt="Close up professional portrait of Gokul, an Indian enterprise retention executive wearing a navy business collar, softly lit with cool ambient studio lighting against a dark corporate gradient backdrop." src="https://lh3.googleusercontent.com/aida-public/AB6AXuCJE4EMoRVP4SDSzh65Ka-CmHua1YnDQmVWY9CtB2Uf8aN3FxtpOOMPoH6E6VFcI7gL9PDQlotSlbirGt_kOrDMYRERe3pHVw7e3rTv2wtxeWZ-5mTYxep1u7zFjhOzTw-6F2vc4qCneGUmFVN9_mk6TJIGnHeXRQFQqGQS10WoUsa30zKIW0d5Tm0znL0rFEH3zLuFLAvuVeTtM_1YEBRQghKEp_EeR0-A_GSUlTgb0d213jmbHtTb"/>
+<div class="hidden xl:flex flex-col text-left">
+<span class="text-body-sm font-body-sm font-semibold text-on-surface leading-none">Gokul</span>
+<span class="text-[10px] text-on-surface-variant/80 font-label-code">VP RevOps</span>
+</div>
+</div>
+</div>
+</header>
+<!-- ===================================================================== -->
+<!-- MAIN CONTENT CANVAS                                                   -->
+<!-- ===================================================================== -->
+<main class="flex-1 px-gutter-desktop py-space-lg space-y-space-lg max-w-[1720px] mx-auto w-full">
+<!-- =================================================================== -->
+<!-- 1. CUSTOMER HEADER SUMMARY BAR (Telemetry Hero Panel)               -->
+<!-- =================================================================== -->
+<section class="rounded-xl p-space-lg bg-surface-container-low border border-outline-variant/30 shadow-[0_4px_20px_rgba(0,15,31,0.5)]">
+<div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-space-lg">
+<!-- Customer Identity & Metadata Badges -->
+<div class="space-y-space-sm">
+<div class="flex flex-wrap items-center gap-space-sm">
+<h1 class="text-headline-xl font-headline-xl text-on-surface tracking-tight font-bold">Apex Logistics</h1>
+<!-- Customer ID copy badge -->
+<button class="flex items-center gap-1 px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/40 text-primary hover:border-primary/60 transition-colors font-label-code text-label-code" title="Click to copy Customer ID">
+<span>CUST001</span>
+<span class="material-symbols-outlined text-[14px]">content_copy</span>
+</button>
+<!-- Critical Status Badges -->
+<div class="flex items-center gap-2">
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-error/10 border border-error/30 text-error font-label-caps text-label-caps tracking-wider shadow-[0_0_12px_rgba(239,68,68,0.25)]">
+<span class="w-1.5 h-1.5 rounded-full bg-error animate-pulse"></span>
+                  HIGH RISK
+                </span>
+<span class="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-error-container/40 border border-error/50 text-error font-body-sm font-semibold">
+<span class="material-symbols-outlined text-[16px]">warning</span>
+                  Churn Probability: 82%
+                </span>
+</div>
+</div>
+<!-- Metadata Key-Value Stream -->
+<div class="flex flex-wrap items-center gap-x-space-lg gap-y-space-xs text-body-sm font-body-sm text-on-surface-variant">
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">location_on</span>
+<span>Coimbatore, India</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">domain</span>
+<span>Logistics &amp; Supply Chain</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-secondary">verified</span>
+<span class="text-secondary font-medium">Tier 1 Enterprise</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">attach_money</span>
+<span class="font-label-code font-semibold text-on-surface">$48,200 ARR</span>
+</div>
+<span class="text-outline-variant">•</span>
+<div class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">support_agent</span>
+<span>CSM: <strong class="text-on-surface font-medium">Sarah Jenkins</strong></span>
+</div>
+</div>
+</div>
+<!-- Top-Right Action Row -->
+<div class="flex flex-wrap items-center gap-space-sm flex-shrink-0">
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright border border-outline-variant/40 text-on-surface text-body-sm font-body-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px] text-primary">download</span>
+<span>Export Audit Report</span>
+</button>
+<button class="flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-bright border border-outline-variant/40 text-on-surface text-body-sm font-body-sm font-medium transition-colors">
+<span class="material-symbols-outlined text-[18px] text-secondary">tune</span>
+<span>Simulate Campaign</span>
+</button>
+<button class="flex items-center gap-1.5 px-4 py-2 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-fixed font-semibold text-body-sm font-body-sm shadow-[0_4px_16px_rgba(59,144,255,0.4)] transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">restart_alt</span>
+<span>Reactivate Account</span>
+</button>
+</div>
+</div>
+</section>
+<!-- =================================================================== -->
+<!-- 2. CUSTOMER OVERVIEW METRICS (6 Telemetry Stat Cards)               -->
+<!-- =================================================================== -->
+<section class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-space-md">
+<!-- Stat 1: Login Days -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/25 flex flex-col justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-caps font-label-caps">LOGIN DAYS (30D)</span>
+<span class="material-symbols-outlined text-[16px] text-outline">login</span>
+</div>
+<div class="my-2">
+<div class="text-data-metric font-data-metric text-on-surface">4 Days</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-error">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+<span>-68% vs prior mo</span>
+</div>
+</div>
+<!-- Stat 2: Hours Spent -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/25 flex flex-col justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-caps font-label-caps">HOURS SPENT</span>
+<span class="material-symbols-outlined text-[16px] text-outline">schedule</span>
+</div>
+<div class="my-2">
+<div class="text-data-metric font-data-metric text-on-surface">2.4 hrs</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-error">
+<span class="material-symbols-outlined text-[14px]">trending_down</span>
+<span>-54% drop</span>
+</div>
+</div>
+<!-- Stat 3: Support Tickets -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-error/30 bg-error/5 flex flex-col justify-between hover:border-error/60 transition-colors">
+<div class="flex items-center justify-between text-error">
+<span class="text-label-caps font-label-caps">SUPPORT TICKETS</span>
+<span class="material-symbols-outlined text-[16px]">priority_high</span>
+</div>
+<div class="my-2">
+<div class="text-data-metric font-data-metric text-error">7 Open</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-error">
+<span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+<span>+4 escalated (P1)</span>
+</div>
+</div>
+<!-- Stat 4: Orders / Deliveries -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/25 flex flex-col justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-caps font-label-caps">DELIVERIES</span>
+<span class="material-symbols-outlined text-[16px] text-outline">local_shipping</span>
+</div>
+<div class="my-2">
+<div class="text-data-metric font-data-metric text-on-surface">18 Orders</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-outline">
+<span>Down from 62 avg/mo</span>
+</div>
+</div>
+<!-- Stat 5: Average Rating / NPS -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/25 flex flex-col justify-between hover:border-primary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-caps font-label-caps">AVG RATING</span>
+<span class="material-symbols-outlined text-[16px] text-outline">star_half</span>
+</div>
+<div class="my-2">
+<div class="text-data-metric font-data-metric text-error">2.2 / 5.0</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-error">
+<span>NPS: -34 (Detractor)</span>
+</div>
+</div>
+<!-- Stat 6: Plan & Renewal -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/25 flex flex-col justify-between hover:border-secondary/40 transition-colors">
+<div class="flex items-center justify-between text-on-surface-variant">
+<span class="text-label-caps font-label-caps">PLAN &amp; EXPIRY</span>
+<span class="material-symbols-outlined text-[16px] text-secondary">workspace_premium</span>
+</div>
+<div class="my-2">
+<div class="text-body-lg font-body-lg font-bold text-on-surface truncate">Enterprise Annual</div>
+</div>
+<div class="flex items-center gap-1 text-[11px] font-label-code text-secondary">
+<span class="material-symbols-outlined text-[14px]">event_repeat</span>
+<span>Renews in 42 days</span>
+</div>
+</div>
+</section>
+<!-- =================================================================== -->
+<!-- 3. CORE INTELLIGENCE SPLIT (60% / 40% Dynamic Columns)              -->
+<!-- =================================================================== -->
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-start">
+<!-- ================================================================= -->
+<!-- LEFT COLUMN (60% - 7 Columns): Risk Meter, Factors, Timeline       -->
+<!-- ================================================================= -->
+<div class="lg:col-span-7 space-y-space-lg">
+<!-- SECTION 3.1: PREDICTIVE RISK ANALYSIS & RISK METER -->
+<div class="rounded-xl p-space-lg bg-surface-container-low border border-outline-variant/30">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-space-sm mb-space-md">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-error text-[22px]">radar</span>
+<h2 class="text-headline-md font-headline-md text-on-surface">Predictive Risk Analysis <span class="text-body-sm font-label-code text-on-surface-variant font-normal">(Model v4.2)</span></h2>
+</div>
+<span class="px-2.5 py-0.5 rounded-full text-label-code font-label-code bg-surface-container-high text-secondary border border-secondary/30 flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary"></span>
+                94.8% Confidence
+              </span>
+</div>
+<!-- Visual Gauge & Sub-metrics Grid -->
+<div class="grid grid-cols-1 md:grid-cols-12 gap-space-lg items-center">
+<!-- SVG Semi-Circular Meter (5 cols) -->
+<div class="md:col-span-5 flex flex-col items-center justify-center p-space-sm relative">
+<div class="relative w-48 h-36 flex items-center justify-center overflow-hidden">
+<svg class="w-full h-full drop-shadow-[0_0_12px_rgba(239,68,68,0.3)]" viewbox="0 0 200 120">
+<!-- Background Arc -->
+<path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#1a2b3d" stroke-linecap="round" stroke-width="16"></path>
+<!-- Critical Active Arc (82%) -->
+<path d="M 20 100 A 80 80 0 0 1 180 100" fill="none" stroke="#EF4444" stroke-dasharray="251.2" stroke-dashoffset="45.2" stroke-linecap="round" stroke-width="16"></path>
+</svg>
+<!-- Value Overlay -->
+<div class="absolute bottom-2 inset-x-0 flex flex-col items-center text-center">
+<span class="text-display-lg font-headline-xl font-extrabold text-error tracking-tight leading-none">82%</span>
+<span class="text-[11px] font-label-caps uppercase tracking-widest text-on-surface-variant mt-1">Churn Probability</span>
+</div>
+</div>
+<div class="mt-2 text-center">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded bg-error-container/30 border border-error/40 text-error text-label-caps font-label-caps tracking-wider font-bold">
+<span class="w-2 h-2 rounded-full bg-error animate-ping"></span>
+                    CRITICAL HIGH RISK
+                  </span>
+<p class="text-body-sm font-label-code text-on-surface-variant mt-1.5">Score: <strong class="text-on-surface font-semibold">82 / 100</strong></p>
+</div>
+</div>
+<!-- Comparison Sub-Metrics (7 cols) -->
+<div class="md:col-span-7 space-y-space-sm">
+<!-- Sub metric 1 -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex items-center justify-between">
+<div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">BENCHMARK COMPARISON</div>
+<div class="text-body-md font-body-md text-on-surface mt-0.5">Industry Cohort Avg: <strong class="text-secondary font-label-code">24%</strong></div>
+</div>
+<span class="text-error font-label-code text-body-sm font-semibold bg-error/10 px-2 py-0.5 rounded border border-error/20">+58% deviation</span>
+</div>
+<!-- Sub metric 2 -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex items-center justify-between">
+<div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">RISK VELOCITY</div>
+<div class="text-body-md font-body-md text-on-surface mt-0.5">Escalation in last 14 days</div>
+</div>
+<div class="text-right">
+<span class="text-error font-label-code text-body-sm font-bold flex items-center justify-end gap-0.5">
+<span class="material-symbols-outlined text-[16px]">north_east</span>
+                      +28% surge
+                    </span>
+</div>
+</div>
+<!-- Sub metric 3 -->
+<div class="p-3 rounded-lg bg-surface-container border border-outline-variant/20 flex items-center justify-between">
+<div>
+<div class="text-label-caps font-label-caps text-on-surface-variant">EXPECTED ARR AT RISK</div>
+<div class="text-data-metric font-data-metric text-on-surface font-bold mt-0.5">$48,200</div>
+</div>
+<span class="text-body-sm font-body-sm text-outline font-label-code">Renewal: 42d</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3.2: TOP RISK FACTORS (SHAPLEY VALUE IMPACT CARDS) -->
+<div class="space-y-space-sm">
+<div class="flex items-center justify-between">
+<h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary text-[20px]">equalizer</span>
+                Top Risk Factors (Shapley Value Weights)
+              </h3>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Sorted by negative retention impact</span>
+</div>
+<div class="space-y-space-sm">
+<!-- Factor 1: Low Engagement (44%) -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-error/30 hover:border-error/60 transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-error-container/30 text-error">
+<span class="material-symbols-outlined text-[20px]">person_off</span>
+</div>
+<div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface">Low Platform Engagement</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Customer active only 4 days in last 30d; key logistics workflows inactive for 18 days.</p>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="px-2 py-0.5 rounded text-[10px] font-label-caps bg-error/15 text-error border border-error/30 font-bold">CRITICAL</span>
+<div class="text-label-code font-label-code text-on-surface font-semibold text-body-sm mt-1">Impact: 44%</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-error rounded-full" style="width: 44%;"></div>
+</div>
+</div>
+<!-- Factor 2: Unresolved Complaints (28%) -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/30 hover:border-outline-variant transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-surface-container-high text-error">
+<span class="material-symbols-outlined text-[20px]">sync_problem</span>
+</div>
+<div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface">Unresolved Support Complaints</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">3 P1 tickets regarding delivery sync latency unresolved for &gt;96 hours.</p>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="px-2 py-0.5 rounded text-[10px] font-label-caps bg-error/10 text-error border border-error/20 font-bold">HIGH</span>
+<div class="text-label-code font-label-code text-on-surface font-semibold text-body-sm mt-1">Impact: 28%</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-error/80 rounded-full" style="width: 28%;"></div>
+</div>
+</div>
+<!-- Factor 3: Decline in Order Frequency (18%) -->
+<div class="rounded-xl p-space-md bg-surface-container-low border border-outline-variant/30 hover:border-outline-variant transition-all">
+<div class="flex items-start justify-between gap-space-sm">
+<div class="flex items-center gap-2.5">
+<div class="p-2 rounded-lg bg-surface-container-high text-secondary">
+<span class="material-symbols-outlined text-[20px]">trending_down</span>
+</div>
+<div>
+<h4 class="text-body-lg font-body-lg font-semibold text-on-surface">Sharp Decline in Order Frequency</h4>
+<p class="text-body-sm font-body-sm text-on-surface-variant mt-0.5">Weekly fulfillment volume dropped from 15/week to 2/week over the last month.</p>
+</div>
+</div>
+<div class="text-right flex-shrink-0">
+<span class="px-2 py-0.5 rounded text-[10px] font-label-caps bg-secondary/10 text-secondary border border-secondary/20 font-bold">MODERATE</span>
+<div class="text-label-code font-label-code text-on-surface font-semibold text-body-sm mt-1">Impact: 18%</div>
+</div>
+</div>
+<!-- Progress Bar -->
+<div class="w-full h-1.5 bg-surface-container-high rounded-full mt-3 overflow-hidden">
+<div class="h-full bg-secondary rounded-full" style="width: 18%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 3.3: CUSTOMER ACTIVITY LIFECYCLE TIMELINE -->
+<div class="rounded-xl p-space-lg bg-surface-container-low border border-outline-variant/30">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-space-sm mb-space-md">
+<h3 class="text-headline-md font-headline-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">history_toggle_off</span>
+                Customer Lifecycle &amp; Incident History
+              </h3>
+<span class="text-body-sm font-body-sm text-on-surface-variant">Last 10 months</span>
+</div>
+<!-- Chronological Vertical Timeline -->
+<div class="relative pl-6 space-y-6 before:content-[''] before:absolute before:left-2.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-outline-variant/30">
+<!-- Node 1: Oct 24 (Critical Escalate) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-error border-4 border-surface-container-low shadow-[0_0_8px_rgba(239,68,68,0.8)]"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-error/40">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-error font-semibold">Churn Risk Score escalated from 48% to 82%</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Oct 24, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Model triggered Critical Alert based on 18 consecutive days of dispatcher platform dormancy.</p>
+</div>
+</div>
+<!-- Node 2: Oct 19 (Support P1) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-secondary border-4 border-surface-container-low shadow-[0_0_8px_rgba(68,221,254,0.6)]"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant/20">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-on-surface font-medium">Escalated Support Ticket #TK-9042 created (API Timeout)</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Oct 19, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Dispatcher API sync batch timed out during peak festive fulfillment run; P1 unresolved.</p>
+</div>
+</div>
+<!-- Node 3: Oct 12 (Q3 EBR) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-primary border-4 border-surface-container-low"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant/20">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-on-surface font-medium">Dispatched Q3 Executive Business Review</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Oct 12, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Deck opened by VP of Supply Chain; scheduled follow-up meeting cancelled by client.</p>
+</div>
+</div>
+<!-- Node 4: Sep 28 (Order Decline) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-outline border-4 border-surface-container-low"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant/20">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-on-surface font-medium">Order volume declined 40% week-over-week</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Sep 28, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Weekly volume fell below normal seasonal baseline for logistics accounts.</p>
+</div>
+</div>
+<!-- Node 5: Jul 15 (Contract Renewed) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-primary-container border-4 border-surface-container-low shadow-[0_0_8px_rgba(59,144,255,0.6)]"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant/20">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-on-surface font-medium">Contract renewed for 12 months ($48,200 ARR)</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Jul 15, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Tier 1 Enterprise terms signed by Sarah Jenkins with multi-hub routing add-on.</p>
+</div>
+</div>
+<!-- Node 6: Jan 10 (Onboarding) -->
+<div class="relative flex items-start gap-4">
+<span class="absolute -left-6 top-1 w-5 h-5 rounded-full bg-outline-variant border-4 border-surface-container-low"></span>
+<div class="flex-1 bg-surface-container p-3 rounded-lg border border-outline-variant/20">
+<div class="flex items-center justify-between text-body-sm font-body-sm mb-1">
+<strong class="text-on-surface font-medium">Account Onboarded &amp; Initial Integrations Connected</strong>
+<span class="text-label-code font-label-code text-on-surface-variant">Jan 10, 2024</span>
+</div>
+<p class="text-body-sm font-body-sm text-on-surface-variant">Connected SAP ERP, Warehouse Telematics, and driver dispatch modules.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- ================================================================= -->
+<!-- RIGHT COLUMN (40% - 5 Columns): AI Insights & Retention Playbook   -->
+<!-- ================================================================= -->
+<div class="lg:col-span-5 space-y-space-lg">
+<!-- SECTION 4.1: AI CUSTOMER INSIGHT (EXECUTIVE AI BRIEFING) -->
+<div class="rounded-xl p-space-lg bg-surface-container-low border border-secondary/40 shadow-[0_4px_24px_rgba(24,200,232,0.1)] relative overflow-hidden">
+<!-- Ambient Glow -->
+<div class="absolute -top-12 -right-12 w-40 h-40 bg-secondary/15 rounded-full blur-3xl pointer-events-none"></div>
+<div class="flex items-center justify-between mb-space-md">
+<div class="flex items-center gap-2">
+<div class="w-8 h-8 rounded-lg bg-secondary/20 flex items-center justify-center text-secondary border border-secondary/40">
+<span class="material-symbols-outlined text-[18px]">psychology</span>
+</div>
+<h3 class="text-headline-md font-headline-md text-on-surface">AI Retention Intelligence</h3>
+</div>
+<span class="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-secondary/10 border border-secondary/30 text-secondary text-label-caps font-label-caps font-bold tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-secondary animate-ping"></span>
+                AI GENERATED
+              </span>
+</div>
+<div class="space-y-space-md">
+<h4 class="text-body-lg font-body-lg font-bold text-on-surface leading-snug">Executive AI Briefing &amp; Risk Synthesis</h4>
+<p class="text-body-md font-body-md text-on-surface-variant leading-relaxed">
+                Apex Logistics displays severe churn velocity triggered by systemic API sync errors leading to frustrated dispatchers. Their <strong class="text-error font-semibold">82% churn probability</strong> is heavily concentrated in the last 14 days following ticket #TK-9042. Because renewal is within <strong class="text-on-surface font-semibold">42 days</strong>, an immediate dual intervention (Executive Sponsor outreach + 20% renewal credits on API volume) holds a <strong class="text-secondary font-semibold">78% probability</strong> of saving the account.
+              </p>
+<!-- Key Recommendation Bullets -->
+<div class="pt-space-xs space-y-2 border-t border-outline-variant/20">
+<div class="flex items-start gap-2 text-body-sm font-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">check_circle</span>
+<span><strong>Immediate Hotline:</strong> Escalate #TK-9042 directly to Platform Engineering Lead.</span>
+</div>
+<div class="flex items-start gap-2 text-body-sm font-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">check_circle</span>
+<span><strong>Commercial Concession:</strong> Approve 20% credit on overage tiers to restore trust.</span>
+</div>
+<div class="flex items-start gap-2 text-body-sm font-body-sm text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary mt-0.5">check_circle</span>
+<span><strong>Executive Touchpoint:</strong> VP Gokul to host 15-minute briefing with Apex CTO.</span>
+</div>
+</div>
+</div>
+</div>
+<!-- SECTION 4.2: RECOMMENDED NEXT ACTION (RETENTION PLAYBOOK) -->
+<div class="rounded-xl p-space-lg bg-surface-container-low border border-outline-variant/30 space-y-space-md">
+<div class="flex items-center justify-between border-b border-outline-variant/20 pb-space-sm">
+<div class="flex items-center gap-2">
+<span class="material-symbols-outlined text-primary text-[20px]">smart_toy</span>
+<h3 class="text-headline-md font-headline-md text-on-surface">Recommended Playbook</h3>
+</div>
+<span class="px-2 py-0.5 rounded text-label-code font-label-code bg-primary-container/20 text-primary border border-primary/30">Auto-Matched</span>
+</div>
+<!-- Playbook Strategy Highlight -->
+<div class="p-3.5 rounded-lg bg-surface-container border border-primary/30 space-y-2">
+<div class="flex items-center justify-between">
+<span class="text-label-caps font-label-caps text-secondary">PRIMARY INTERVENTION</span>
+<span class="text-body-sm font-body-sm text-on-surface-variant font-label-code">Est. Lift: +34%</span>
+</div>
+<div class="text-body-lg font-body-lg font-bold text-on-surface">Enterprise Reactivation Offer</div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">
+<strong>Suggested Concession:</strong> 20% Off Renewal + SLA Latency Credit
+              </div>
+<div class="text-body-sm font-body-sm text-on-surface-variant">
+<strong>Target Reason:</strong> Counteract 32-day engagement drop and unresolved support friction.
+              </div>
+</div>
+<!-- Message Draft Preview Box -->
+<div class="space-y-1.5">
+<div class="flex items-center justify-between text-body-sm font-body-sm">
+<span class="text-on-surface font-medium flex items-center gap-1">
+<span class="material-symbols-outlined text-[16px] text-outline">mail</span>
+                  Generated Message Draft Preview
+                </span>
+<button class="text-primary hover:underline text-[12px] font-label-code">Edit Draft</button>
+</div>
+<div class="p-3 rounded-lg bg-surface-container-lowest border border-outline-variant/30 font-body-sm text-on-surface-variant text-xs leading-relaxed italic">
+                “Hello Gokul &amp; Apex Leadership, we noticed the recent latency challenges on your dispatch routes over the past two weeks. We’ve deployed a dedicated patch to the Coimbatore routing cluster, and as our commitment, we’re applying a 20% service credit toward your Q4 renewal...”
+              </div>
+</div>
+<!-- Action Trigger CTAs -->
+<div class="space-y-2.5 pt-space-xs">
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-primary-container hover:bg-primary-container/90 text-on-primary-fixed font-semibold text-body-md font-body-md shadow-[0_4px_16px_rgba(59,144,255,0.4)] transition-all active:scale-[0.98]">
+<span class="material-symbols-outlined text-[18px]">send</span>
+<span>Create Retention Campaign</span>
+</button>
+<button class="w-full flex items-center justify-center gap-2 py-2.5 px-4 rounded-lg bg-surface-container-high hover:bg-surface-bright border border-outline-variant/40 text-on-surface font-medium text-body-md font-body-md transition-all">
+<span class="material-symbols-outlined text-[18px] text-secondary">science</span>
+<span>Simulate Impact in Sandbox</span>
+</button>
+<button class="w-full flex items-center justify-center gap-2 py-2 px-4 rounded-lg text-primary hover:bg-surface-container transition-colors text-body-sm font-body-sm font-medium">
+<span class="material-symbols-outlined text-[16px]">call</span>
+<span>Assign Dedicated CSM Call (Sarah Jenkins)</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>
