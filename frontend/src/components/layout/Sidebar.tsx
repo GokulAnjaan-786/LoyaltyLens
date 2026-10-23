@@ -2,93 +2,131 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { useAuth } from '@/context/AuthContext';
+import {
+  LayoutDashboard,
+  Users,
+  BarChart3,
+  RefreshCw,
+  Megaphone,
+  Sliders,
+  Sparkles,
+  UploadCloud,
+  Settings,
+  User,
+  LogOut,
+  ChevronLeft,
+  ChevronRight,
+  Menu,
+  X,
+  ShieldCheck,
+} from 'lucide-react';
 
-export const Sidebar: React.FC = () => {
+interface SidebarProps {
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+  mobileOpen?: boolean;
+  onCloseMobile?: () => void;
+}
+
+export const Sidebar: React.FC<SidebarProps> = ({
+  collapsed = false,
+  onToggleCollapse,
+  mobileOpen = false,
+  onCloseMobile,
+}) => {
   const router = useRouter();
   const { user, appType, setAppType, logout } = useAuth();
-  const [mobileOpen, setMobileOpen] = useState(false);
 
   const navigation = [
-    { name: 'Dashboard', href: '/dashboard', icon: 'dashboard' },
-    { name: 'Customers', href: '/customers', icon: 'group' },
-    { name: 'Analytics', href: '/analytics', icon: 'analytics' },
-    { name: 'Retention', href: '/retention', icon: 'autorenew' },
-    { name: 'Campaigns', href: '/campaigns', icon: 'campaign' },
-    { name: 'Simulator', href: '/simulator', icon: 'tune' },
-    { name: 'AI Insights', href: '/ai-insights', icon: 'psychology' },
-    { name: 'Data Upload', href: '/upload', icon: 'cloud_upload' },
+    { name: 'Dashboard', href: '/dashboard', icon: LayoutDashboard },
+    { name: 'Customers', href: '/customers', icon: Users },
+    { name: 'Analytics', href: '/analytics', icon: BarChart3 },
+    { name: 'Retention Intelligence', href: '/retention', icon: RefreshCw },
+    { name: 'Campaigns', href: '/campaigns', icon: Megaphone },
+    { name: 'Retention Simulator', href: '/simulator', icon: Sliders },
+    { name: 'AI Insights', href: '/ai-insights', icon: Sparkles },
+    { name: 'Data Upload', href: '/upload', icon: UploadCloud },
   ];
 
   return (
     <>
-      {/* Mobile Menu Toggle Button */}
-      <button
-        onClick={() => setMobileOpen(!mobileOpen)}
-        className="lg:hidden fixed bottom-5 left-5 z-50 p-3 rounded-full bg-secondary-container text-on-secondary-container shadow-2xl border border-secondary/40"
-        title="Toggle Menu"
-      >
-        <span className="material-symbols-outlined">{mobileOpen ? 'close' : 'menu'}</span>
-      </button>
-
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div
-          onClick={() => setMobileOpen(false)}
-          className="lg:hidden fixed inset-0 z-40 bg-black/70 backdrop-blur-sm"
+          onClick={onCloseMobile}
+          className="lg:hidden fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm transition-opacity"
+          aria-hidden="true"
         />
       )}
 
-      {/* Stitch Fixed SideNavBar (240px) */}
+      {/* Main White Sidebar */}
       <aside
-        className={`fixed top-0 left-0 h-screen w-60 z-40 bg-surface-container-lowest border-r border-outline-variant/30 flex flex-col justify-between p-space-md select-none transition-all duration-150 ease-in-out ${
-          mobileOpen ? 'flex' : 'hidden lg:flex'
+        className={`fixed top-0 left-0 h-screen z-40 bg-white border-r border-[#E2E8F0] flex flex-col justify-between select-none transition-all duration-200 ease-in-out shadow-subtle ${
+          collapsed ? 'w-20' : 'w-64'
+        } ${
+          mobileOpen ? 'translate-x-0 w-64' : '-translate-x-full lg:translate-x-0'
         }`}
       >
-        {/* Top Brand & Navigation */}
-        <div className="space-y-6">
-          {/* Logo Block */}
-          <div className="flex items-center gap-space-sm px-space-xs pt-1">
-            <div className="w-9 h-9 rounded-lg overflow-hidden flex items-center justify-center bg-surface-container-high border border-outline-variant/40 shrink-0 p-1">
-              <img
-                src="/logo/loyaltylens-logo.png"
-                alt="LoyaltyLens Enterprise Logo mark"
-                className="w-full h-full object-contain"
-              />
-            </div>
-            <div className="flex flex-col min-w-0">
-              <span className="text-headline-md font-headline-md font-bold text-on-surface tracking-tight leading-tight truncate">
-                LoyaltyLens
-              </span>
-              <span className="text-label-caps font-label-caps text-on-surface-variant truncate">
-                Enterprise Retention Intelligence
-              </span>
-            </div>
+        {/* Top: Logo & Nav items */}
+        <div className="flex flex-col flex-1 overflow-y-auto">
+          {/* Logo Header */}
+          <div className="h-16 flex items-center justify-between px-4 border-b border-[#E2E8F0] shrink-0">
+            <Link
+              href="/dashboard"
+              className="flex items-center gap-3 overflow-hidden focus:outline-none"
+            >
+              <div className="w-9 h-9 rounded-lg bg-[#2563EB] flex items-center justify-center text-white shrink-0 shadow-sm">
+                <ShieldCheck className="w-5 h-5 text-white" />
+              </div>
+              {!collapsed && (
+                <div className="flex flex-col min-w-0">
+                  <div className="flex items-center gap-1.5">
+                    <span className="font-bold text-base text-[#172033] tracking-tight leading-tight">
+                      LoyaltyLens
+                    </span>
+                    <span className="text-[10px] uppercase font-bold tracking-wider px-1.5 py-0.2 rounded bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE]">
+                      SaaS
+                    </span>
+                  </div>
+                  <span className="text-[11px] text-[#64748B] truncate">
+                    Retention Intelligence
+                  </span>
+                </div>
+              )}
+            </Link>
+
+            {/* Close button for Mobile drawer */}
+            <button
+              onClick={onCloseMobile}
+              className="lg:hidden p-1.5 rounded-md text-[#64748B] hover:text-[#172033] hover:bg-slate-100"
+              title="Close Navigation"
+            >
+              <X className="w-5 h-5" />
+            </button>
           </div>
 
-          {/* Industry Context Selector */}
-          <div className="px-space-xs">
-            <label className="block text-label-caps font-label-caps text-on-surface-variant mb-1">
-              Industry Mode
-            </label>
-            <div className="relative">
+          {/* Industry Context Selector (Shown when not collapsed) */}
+          {!collapsed && (
+            <div className="px-4 py-3 border-b border-[#E2E8F0] bg-[#F8FAFC]">
+              <label className="block text-[10px] font-bold uppercase tracking-wider text-[#64748B] mb-1">
+                Industry Context
+              </label>
               <select
                 value={appType}
                 onChange={(e) => setAppType(e.target.value)}
-                className="w-full bg-surface-container-lowest text-on-surface text-body-sm font-body-sm rounded-lg border border-outline-variant/40 px-2.5 py-1.5 pr-8 appearance-none focus:outline-none focus:border-secondary focus:ring-1 focus:ring-secondary"
+                className="w-full bg-white text-[#172033] text-xs font-medium rounded-md border border-[#E2E8F0] px-2.5 py-1.5 focus:outline-none focus:border-[#2563EB] focus:ring-1 focus:ring-[#2563EB] shadow-sm cursor-pointer"
               >
                 <option value="🍔 Food Delivery App">🍔 Food Delivery</option>
                 <option value="🛒 Shopping / E-commerce App">🛒 E-Commerce</option>
                 <option value="📚 Learning / Education App">📚 EdTech / Learning</option>
               </select>
-              <span className="material-symbols-outlined absolute right-2 top-1/2 -translate-y-1/2 text-outline-variant pointer-events-none text-[18px]">
-                unfold_more
-              </span>
             </div>
-          </div>
+          )}
 
-          {/* Nav Items */}
-          <nav className="flex flex-col gap-1">
+          {/* Navigation Items */}
+          <nav className="p-3 space-y-1">
             {navigation.map((item) => {
+              const Icon = item.icon;
               const isActive =
                 router.pathname === item.href ||
                 (item.href !== '/dashboard' && router.pathname.startsWith(item.href));
@@ -97,62 +135,84 @@ export const Sidebar: React.FC = () => {
                 <Link
                   key={item.name}
                   href={item.href}
-                  onClick={() => setMobileOpen(false)}
-                  className={`flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors duration-150 ease-out ${
+                  onClick={onCloseMobile}
+                  title={collapsed ? item.name : undefined}
+                  className={`group flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
                     isActive
-                      ? 'bg-surface-container-high text-primary border-l-2 border-primary font-semibold'
-                      : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60'
-                  }`}
+                      ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold border-l-4 border-[#2563EB]'
+                      : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+                  } ${collapsed ? 'justify-center px-0' : ''}`}
                 >
-                  <span
-                    className={`material-symbols-outlined text-[20px] ${
-                      isActive ? 'text-secondary' : 'text-on-surface-variant'
+                  <Icon
+                    className={`w-5 h-5 shrink-0 transition-colors ${
+                      isActive ? 'text-[#2563EB]' : 'text-[#64748B] group-hover:text-[#172033]'
                     }`}
-                  >
-                    {item.icon}
-                  </span>
-                  <span className="text-body-sm font-body-sm">{item.name}</span>
+                  />
+                  {!collapsed && <span className="truncate">{item.name}</span>}
                 </Link>
               );
             })}
           </nav>
         </div>
 
-        {/* Bottom Navigation: Settings, Profile, Logout */}
-        <div className="pt-4 border-t border-outline-variant/30 flex flex-col gap-1">
+        {/* Bottom Section: Settings, Profile, Logout, Collapse Toggle */}
+        <div className="p-3 border-t border-[#E2E8F0] space-y-1 bg-[#F8FAFC]/50">
           <Link
             href="/settings"
-            onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors duration-150 ease-out ${
+            onClick={onCloseMobile}
+            title={collapsed ? 'Settings' : undefined}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               router.pathname === '/settings'
-                ? 'bg-surface-container-high text-primary font-semibold'
-                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60'
-            }`}
+                ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
+                : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
           >
-            <span className="material-symbols-outlined text-[20px]">settings</span>
-            <span className="text-body-sm font-body-sm">Settings</span>
+            <Settings className="w-5 h-5 shrink-0" />
+            {!collapsed && <span>Settings</span>}
           </Link>
 
           <Link
             href="/profile"
-            onClick={() => setMobileOpen(false)}
-            className={`flex items-center gap-space-sm px-space-md py-space-sm rounded-lg transition-colors duration-150 ease-out ${
+            onClick={onCloseMobile}
+            title={collapsed ? 'Profile' : undefined}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-all ${
               router.pathname === '/profile'
-                ? 'bg-surface-container-high text-primary font-semibold'
-                : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container/60'
-            }`}
+                ? 'bg-[#EFF6FF] text-[#2563EB] font-semibold'
+                : 'text-[#64748B] hover:text-[#172033] hover:bg-[#F8FAFC]'
+            } ${collapsed ? 'justify-center px-0' : ''}`}
           >
-            <span className="material-symbols-outlined text-[20px]">person</span>
-            <span className="text-body-sm font-body-sm">Profile</span>
+            <User className="w-5 h-5 shrink-0" />
+            {!collapsed && <span>Profile</span>}
           </Link>
 
           <button
             onClick={logout}
-            className="flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-error hover:bg-error-container/20 transition-colors duration-150 ease-out w-full text-left"
+            title={collapsed ? 'Logout' : undefined}
+            className={`flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium text-[#DC2626] hover:bg-red-50 transition-all w-full text-left ${
+              collapsed ? 'justify-center px-0' : ''
+            }`}
           >
-            <span className="material-symbols-outlined text-[20px]">logout</span>
-            <span className="text-body-sm font-body-sm">Logout</span>
+            <LogOut className="w-5 h-5 shrink-0" />
+            {!collapsed && <span>Logout</span>}
           </button>
+
+          {/* Desktop Collapse / Expand Button */}
+          {onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              className="hidden lg:flex items-center justify-center w-full py-1.5 mt-2 rounded-md text-[#64748B] hover:text-[#172033] hover:bg-slate-200/60 transition-colors text-xs font-medium"
+              title={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+            >
+              {collapsed ? (
+                <ChevronRight className="w-4 h-4" />
+              ) : (
+                <div className="flex items-center gap-1.5">
+                  <ChevronLeft className="w-4 h-4" />
+                  <span>Collapse</span>
+                </div>
+              )}
+            </button>
+          )}
         </div>
       </aside>
     </>

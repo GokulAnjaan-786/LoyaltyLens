@@ -3,13 +3,26 @@ import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
-import { BookOpen, CheckCircle, ShieldAlert, Sparkles, Tag, ArrowRight } from 'lucide-react';
+import {
+  BookOpen,
+  CheckCircle2,
+  ShieldAlert,
+  Sparkles,
+  Tag,
+  ArrowRight,
+  Sliders,
+  RefreshCw,
+  Target,
+} from 'lucide-react';
 import { CardSkeleton } from '@/components/common/Skeleton';
 import { EmptyState } from '@/components/common/EmptyState';
+import { RiskBadge } from '@/components/common/RiskBadge';
+import { safeArray } from '@/lib/safeData';
 
 export default function RetentionPlaybookPage() {
   const { appType } = useAuth();
   const [recommendations, setRecommendations] = useState<any[]>([]);
+  const [selectedFilter, setSelectedFilter] = useState<string>('ALL');
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -26,36 +39,37 @@ export default function RetentionPlaybookPage() {
         setRecommendations(res.data);
       } else if (res.data) {
         const combined = [
-          ...(res.data.high_risk_actions || []).map((item: any) => ({
+          ...safeArray(res.data.high_risk_actions).map((item: any) => ({
             ...item,
             title: item.title || item.action,
             description: item.description || item.reason,
-            risk_level: item.risk_level || 'High Risk',
+            risk_level: item.risk_level || 'HIGH',
             target_segment: item.target_segment || 'High Risk Cohort',
-            expected_impact: item.expected_impact || item.impact
+            expected_impact: item.expected_impact || item.impact,
           })),
-          ...(res.data.medium_risk_actions || []).map((item: any) => ({
+          ...safeArray(res.data.medium_risk_actions).map((item: any) => ({
             ...item,
             title: item.title || item.action,
             description: item.description || item.reason,
-            risk_level: item.risk_level || 'Medium Risk',
+            risk_level: item.risk_level || 'MEDIUM',
             target_segment: item.target_segment || 'Medium Risk Cohort',
-            expected_impact: item.expected_impact || item.impact
+            expected_impact: item.expected_impact || item.impact,
           })),
-          ...(res.data.low_risk_actions || []).map((item: any) => ({
+          ...safeArray(res.data.low_risk_actions).map((item: any) => ({
             ...item,
             title: item.title || item.action,
             description: item.description || item.reason,
-            risk_level: item.risk_level || 'Low Risk',
-            target_segment: item.target_segment || 'Loyal Users',
-            expected_impact: item.expected_impact || item.impact
-          }))
+            risk_level: item.risk_level || 'LOW',
+            target_segment: item.target_segment || 'Loyal Customers',
+            expected_impact: item.expected_impact || item.impact,
+          })),
         ];
         setRecommendations(combined);
       } else {
         setRecommendations([]);
       }
     } catch (err: any) {
+      console.error('Failed to fetch recommendations:', err);
       setError(err.response?.data?.detail || 'Failed to fetch retention recommendations.');
       setRecommendations([]);
     } finally {
@@ -63,31 +77,61 @@ export default function RetentionPlaybookPage() {
     }
   };
 
+  const filtered = recommendations.filter((r) => {
+    if (selectedFilter === 'ALL') return true;
+    const level = (r.risk_level || '').toUpperCase();
+    return level.includes(selectedFilter);
+  });
+
   return (
-    <AppLayout title="Retention Playbook">
+    <AppLayout title="Retention Intelligence" subtitle="Automated Playbooks & Interventions">
       <div className="space-y-6">
         {/* Header */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card">
           <div>
-            <h1 className="text-2xl font-bold text-white tracking-tight flex items-center gap-2">
-              <BookOpen className="w-7 h-7 text-emerald-400" />
-              Automated Retention Playbook & Recommendations
-            </h1>
-            <p className="text-slate-400 text-sm mt-1">
-              Data-driven retention strategies generated from customer activity, risk scores, and industry rules.
+            <div className="flex items-center gap-2.5">
+              <div className="w-9 h-9 rounded-lg bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB]">
+                <BookOpen className="w-5 h-5 text-[#2563EB]" />
+              </div>
+              <h1 className="text-xl sm:text-2xl font-bold text-[#172033] tracking-tight">
+                Retention Intelligence & Action Playbooks
+              </h1>
+            </div>
+            <p className="text-xs sm:text-sm text-[#64748B] mt-1 max-w-2xl">
+              Data-driven retention strategies synthesized from customer telemetry, behavioral friction indicators, and domain rules.
             </p>
           </div>
-          <Link
-            href="/simulator"
-            className="px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition-all flex items-center gap-2"
-          >
-            <span>Run Campaign Simulator</span>
-            <ArrowRight className="w-4 h-4" />
-          </Link>
+
+          <div className="flex items-center gap-3">
+            <Link
+              href="/simulator"
+              className="px-4 py-2 bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-all flex items-center gap-1.5"
+            >
+              <Sliders className="w-4 h-4" />
+              <span>Retention Simulator</span>
+            </Link>
+          </div>
+        </div>
+
+        {/* Filter Pills */}
+        <div className="flex items-center gap-2 bg-white p-2 rounded-xl border border-[#E2E8F0] shadow-subtle w-fit text-xs font-semibold">
+          {['ALL', 'HIGH', 'MEDIUM', 'LOW'].map((lvl) => (
+            <button
+              key={lvl}
+              onClick={() => setSelectedFilter(lvl)}
+              className={`px-3 py-1.5 rounded-lg transition-all ${
+                selectedFilter === lvl
+                  ? 'bg-[#EFF6FF] text-[#2563EB] font-bold border border-[#BFDBFE]'
+                  : 'text-[#64748B] hover:text-[#172033] hover:bg-slate-50'
+              }`}
+            >
+              {lvl === 'ALL' ? 'All Playbooks' : `${lvl} Priority`}
+            </button>
+          ))}
         </div>
 
         {error && (
-          <div className="p-4 rounded-xl bg-red-500/10 border border-red-500/30 text-red-300 text-sm">
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
             {error}
           </div>
         )}
@@ -98,57 +142,54 @@ export default function RetentionPlaybookPage() {
             <CardSkeleton />
             <CardSkeleton />
           </div>
-        ) : recommendations.length === 0 ? (
+        ) : filtered.length === 0 ? (
           <EmptyState
             title="No Playbook Recommendations Found"
-            description="No specific retention playbooks are configured for this industry mode."
-            actionText="Go to Settings"
-            onAction={() => window.location.href = '/settings'}
+            description="No specific retention playbooks found for the selected risk filter."
+            actionText="Reset Filter"
+            onAction={() => setSelectedFilter('ALL')}
             icon={BookOpen}
           />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Array.isArray(recommendations) && recommendations.map((rec, idx) => (
+            {filtered.map((rec, idx) => (
               <div
                 key={idx}
-                className="p-6 rounded-xl bg-slate-900 border border-slate-800 shadow-xl flex flex-col justify-between hover:border-slate-700 transition-all"
+                className="bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card hover:shadow-card-hover transition-all flex flex-col justify-between space-y-4"
               >
-                <div className="space-y-4">
+                <div className="space-y-3">
                   <div className="flex items-center justify-between">
-                    <span className={`px-2.5 py-1 rounded-md text-[11px] font-bold uppercase tracking-wider ${
-                      rec.risk_level === 'High Risk' ? 'bg-red-500/20 text-red-400 border border-red-500/30' :
-                      rec.risk_level === 'Medium Risk' ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' :
-                      'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30'
-                    }`}>
-                      {rec.risk_level}
+                    <RiskBadge level={rec.risk_level} size="sm" />
+                    <span className="text-[11px] font-semibold text-[#64748B] bg-[#F8FAFC] px-2 py-0.5 rounded border border-[#E2E8F0]">
+                      {rec.target_segment}
                     </span>
-                    <span className="text-xs font-semibold text-slate-400">{rec.target_segment}</span>
                   </div>
 
                   <div>
-                    <h3 className="text-lg font-bold text-white leading-snug">{rec.title}</h3>
-                    <p className="text-slate-400 text-xs mt-2 leading-relaxed">{rec.description}</p>
+                    <h3 className="font-bold text-base text-[#172033] leading-snug">{rec.title}</h3>
+                    <p className="text-xs text-[#64748B] mt-1.5 leading-relaxed">{rec.description}</p>
                   </div>
 
-                  <div className="p-3.5 rounded-lg bg-slate-800/60 border border-slate-700/60 space-y-2">
-                    <div className="flex items-center gap-2 text-xs font-bold text-emerald-400">
+                  <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-xs font-bold text-[#0D9488]">
                       <Tag className="w-3.5 h-3.5" />
-                      <span>Recommended Retention Action</span>
+                      <span>Recommended Intervention</span>
                     </div>
-                    <p className="text-slate-200 text-xs font-medium">{rec.action}</p>
+                    <p className="text-xs font-semibold text-[#172033]">{rec.action}</p>
                   </div>
                 </div>
 
-                <div className="pt-5 mt-4 border-t border-slate-800/80 flex items-center justify-between text-xs text-slate-400">
-                  <span className="flex items-center gap-1.5 text-emerald-400 font-semibold">
-                    <CheckCircle className="w-3.5 h-3.5" />
-                    Impact: {rec.expected_impact}
+                <div className="pt-4 border-t border-[#E2E8F0] flex items-center justify-between text-xs">
+                  <span className="flex items-center gap-1 text-[#16A34A] font-semibold">
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    <span>Impact: {rec.expected_impact}</span>
                   </span>
                   <Link
                     href={`/campaigns?action=${encodeURIComponent(rec.action)}`}
-                    className="text-emerald-400 hover:text-emerald-300 font-bold transition-colors"
+                    className="inline-flex items-center gap-1 font-bold text-[#2563EB] hover:underline"
                   >
-                    Launch Campaign &rarr;
+                    <span>Deploy Campaign</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
                   </Link>
                 </div>
               </div>

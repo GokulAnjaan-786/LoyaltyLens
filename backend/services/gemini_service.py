@@ -139,6 +139,7 @@ class GeminiAIService:
             "executive_summary": exec_summary,
             "top_problems": top_problems,
             "priority_customer_segments": priority_segments,
+            "priority_segments": priority_segments,
             "recommended_actions": recommended_actions,
             "suggested_campaigns": suggested_campaigns,
             "weekly_snapshot": {

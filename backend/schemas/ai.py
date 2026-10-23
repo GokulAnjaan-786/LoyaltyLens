@@ -1,14 +1,15 @@
-from typing import List, Dict, Any, Optional
-from pydantic import BaseModel
+from typing import List, Dict, Any, Optional, Union
+from pydantic import BaseModel, Field
 
 
 class WeeklyBriefResponse(BaseModel):
-    generated_at: str
-    is_ai_generated: bool
-    ai_provider: str # "Google Gemini 1.5 Flash" or "LoyaltyLens Deterministic Engine (Fallback)"
-    executive_summary: str
-    top_problems: List[str]
-    priority_customer_segments: List[str]
-    recommended_actions: List[Dict[str, str]]
-    suggested_campaigns: List[Dict[str, str]]
-    weekly_snapshot: Dict[str, Any]
+    generated_at: str = ""
+    is_ai_generated: bool = False
+    ai_provider: str = "LoyaltyLens Deterministic Engine (Fallback)"
+    executive_summary: str = ""
+    top_problems: List[str] = Field(default_factory=list)
+    priority_customer_segments: List[str] = Field(default_factory=list)
+    priority_segments: List[str] = Field(default_factory=list)
+    recommended_actions: List[Union[Dict[str, Any], str]] = Field(default_factory=list)
+    suggested_campaigns: List[Union[Dict[str, Any], str]] = Field(default_factory=list)
+    weekly_snapshot: Dict[str, Any] = Field(default_factory=dict)

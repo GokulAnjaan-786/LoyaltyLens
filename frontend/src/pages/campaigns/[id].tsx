@@ -3,6 +3,20 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import { AppLayout } from '@/components/layout/AppLayout';
 import { api } from '@/lib/api';
+import { CardSkeleton } from '@/components/common/Skeleton';
+import { formatDate, safeNumber } from '@/lib/safeData';
+import {
+  ArrowLeft,
+  Megaphone,
+  Play,
+  CheckCircle2,
+  XCircle,
+  Users,
+  TrendingDown,
+  ShieldAlert,
+  Calendar,
+  Tag,
+} from 'lucide-react';
 
 export default function CampaignDetailPage() {
   const router = useRouter();
@@ -24,6 +38,7 @@ export default function CampaignDetailPage() {
       const res = await api.get(`/campaigns/${id}`);
       setCampaign(res.data);
     } catch (err: any) {
+      console.error('Failed to fetch campaign:', err);
       setError(err.response?.data?.detail || 'Failed to fetch campaign details.');
     } finally {
       setLoading(false);
@@ -40,68 +55,81 @@ export default function CampaignDetailPage() {
   };
 
   return (
-    <AppLayout>
+    <AppLayout title="Campaigns" subtitle="Campaign Execution Details">
       <div className="space-y-6">
         {/* Top Back Link */}
-        <Link
-          href="/campaigns"
-          className="inline-flex items-center gap-2 text-body-sm font-semibold text-on-surface-variant hover:text-on-surface transition-colors"
-        >
-          <span className="material-symbols-outlined text-[18px]">arrow_back</span>
-          <span>Back to Campaigns Roster</span>
-        </Link>
+        <div>
+          <Link
+            href="/campaigns"
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#64748B] hover:text-[#172033] transition-colors"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            <span>Back to Campaigns Roster</span>
+          </Link>
+        </div>
 
         {error && (
-          <div className="p-4 rounded-xl bg-error/10 border border-error/30 text-error text-body-sm font-medium">
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 text-xs font-medium">
             {error}
           </div>
         )}
 
         {loading ? (
-          <div className="py-20 text-center space-y-3">
-            <div className="w-8 h-8 border-2 border-secondary border-t-transparent rounded-full animate-spin mx-auto"></div>
-            <p className="text-on-surface-variant text-body-sm">Loading campaign details...</p>
+          <div className="space-y-6">
+            <CardSkeleton />
+            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+              <CardSkeleton />
+            </div>
           </div>
         ) : campaign ? (
           <div className="space-y-6">
             {/* Header Card */}
-            <div className="p-6 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm space-y-4">
+            <div className="bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card space-y-4">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-3">
-                    <h1 className="text-headline-xl font-headline-xl font-bold text-on-surface tracking-tight">{campaign.name}</h1>
-                    <span className="px-2.5 py-1 rounded-full bg-secondary/15 text-secondary border border-secondary/30 text-label-caps font-label-caps font-bold">
+                    <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
+                      {campaign.name}
+                    </h1>
+                    <span className="px-2.5 py-1 rounded-full bg-[#EFF6FF] text-[#2563EB] border border-[#BFDBFE] text-xs font-bold uppercase tracking-wider">
                       {campaign.status}
                     </span>
                   </div>
-                  <p className="text-on-surface-variant text-body-md mt-1">{campaign.description || 'No description provided.'}</p>
+                  <p className="text-xs sm:text-sm text-[#64748B] mt-1">
+                    {campaign.description || 'No description provided.'}
+                  </p>
                 </div>
 
+                {/* Status action buttons */}
                 <div className="flex items-center gap-2">
                   {campaign.status !== 'ACTIVE' && (
                     <button
                       onClick={() => updateStatus('ACTIVE')}
-                      className="px-4 py-2 bg-primary-container text-on-primary-container font-semibold text-body-sm rounded-lg hover:bg-primary transition-all flex items-center gap-2 shadow-sm"
+                      className="px-4 py-2 bg-[#2563EB] text-white font-semibold text-xs rounded-lg hover:bg-blue-700 transition-all flex items-center gap-1.5 shadow-sm"
                     >
-                      <span className="material-symbols-outlined text-[18px]">play_arrow</span>
+                      <Play className="w-3.5 h-3.5 fill-white" />
                       <span>Launch Campaign</span>
                     </button>
                   )}
                   {campaign.status === 'ACTIVE' && (
                     <button
                       onClick={() => updateStatus('COMPLETED')}
-                      className="px-4 py-2 bg-secondary-container text-on-secondary-container font-semibold text-body-sm rounded-lg hover:bg-secondary transition-all flex items-center gap-2 shadow-sm"
+                      className="px-4 py-2 bg-[#16A34A] text-white font-semibold text-xs rounded-lg hover:bg-green-700 transition-all flex items-center gap-1.5 shadow-sm"
                     >
-                      <span className="material-symbols-outlined text-[18px]">check_circle</span>
+                      <CheckCircle2 className="w-3.5 h-3.5" />
                       <span>Mark Completed</span>
                     </button>
                   )}
                   {campaign.status !== 'CANCELLED' && (
                     <button
                       onClick={() => updateStatus('CANCELLED')}
-                      className="px-4 py-2 bg-surface-container text-on-surface-variant hover:text-error hover:bg-error/15 font-semibold text-body-sm rounded-lg border border-outline-variant/30 transition-colors"
+                      className="px-4 py-2 bg-white text-[#DC2626] hover:bg-red-50 font-semibold text-xs rounded-lg border border-red-200 transition-colors flex items-center gap-1.5"
                     >
-                      Cancel Campaign
+                      <XCircle className="w-3.5 h-3.5" />
+                      <span>Cancel</span>
                     </button>
                   )}
                 </div>
@@ -109,55 +137,77 @@ export default function CampaignDetailPage() {
             </div>
 
             {/* Campaign Stats Grid */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-              <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm">
-                <div className="text-on-surface-variant text-label-caps font-label-caps uppercase mb-1">Target Segment</div>
-                <div className="text-headline-md font-bold text-on-surface truncate">{campaign.target_segment}</div>
-                <div className="text-on-surface-variant text-label-code font-label-code mt-1">Level: {campaign.target_risk_level}</div>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-card">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-1">
+                  Target Segment
+                </span>
+                <div className="text-lg font-bold text-[#172033] truncate">{campaign.target_segment}</div>
+                <span className="text-[10px] text-[#64748B] mt-0.5 block">Level: {campaign.target_risk_level}</span>
               </div>
 
-              <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm">
-                <div className="text-on-surface-variant text-label-caps font-label-caps uppercase mb-1">Target Audience</div>
-                <div className="text-display-lg font-data-metric font-bold text-secondary">{campaign.target_customer_count || 0}</div>
-                <div className="text-on-surface-variant text-label-code font-label-code mt-1">Affected accounts</div>
+              <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-card">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-1">
+                  Target Audience
+                </span>
+                <div className="text-2xl font-bold text-[#0D9488] font-sans">
+                  {safeNumber(campaign.target_customer_count, 0)}
+                </div>
+                <span className="text-[10px] text-[#64748B] mt-0.5 block">Affected accounts</span>
               </div>
 
-              <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm">
-                <div className="text-on-surface-variant text-label-caps font-label-caps uppercase mb-1">Expected Saved</div>
-                <div className="text-display-lg font-data-metric font-bold text-primary">{campaign.expected_saved_count || 0}</div>
-                <div className="text-on-surface-variant text-label-code font-label-code mt-1">Projected retained accounts</div>
+              <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-card">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-1">
+                  Expected Saved
+                </span>
+                <div className="text-2xl font-bold text-[#2563EB] font-sans">
+                  {safeNumber(campaign.expected_saved_count, 0)}
+                </div>
+                <span className="text-[10px] text-[#64748B] mt-0.5 block">Projected retained accounts</span>
               </div>
 
-              <div className="p-5 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm">
-                <div className="text-on-surface-variant text-label-caps font-label-caps uppercase mb-1">Risk Reduction</div>
-                <div className="text-display-lg font-data-metric font-bold text-amber-300">{campaign.expected_risk_reduction_pct || 0}%</div>
-                <div className="text-on-surface-variant text-label-code font-label-code mt-1">Estimated impact</div>
+              <div className="p-5 rounded-xl bg-white border border-[#E2E8F0] shadow-card">
+                <span className="text-[11px] font-semibold text-[#64748B] uppercase tracking-wider block mb-1">
+                  Risk Reduction
+                </span>
+                <div className="text-2xl font-bold text-[#16A34A] font-sans">
+                  {campaign.expected_risk_reduction_pct || 0}%
+                </div>
+                <span className="text-[10px] text-[#64748B] mt-0.5 block">Estimated ML impact</span>
               </div>
             </div>
 
-            {/* Campaign Details Card */}
-            <div className="p-6 rounded-xl bg-surface-container-low border border-outline-variant/30 shadow-sm space-y-4">
-              <h3 className="font-bold text-headline-md text-on-surface border-b border-outline-variant/20 pb-3">Campaign Specifications</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-body-sm text-on-surface-variant">
+            {/* Campaign Specifications Card */}
+            <div className="bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card space-y-4">
+              <h3 className="font-bold text-base text-[#172033] border-b border-[#E2E8F0] pb-3 flex items-center gap-2">
+                <Tag className="w-4 h-4 text-[#2563EB]" />
+                Campaign Specifications & Parameters
+              </h3>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-xs text-[#64748B]">
                 <div className="space-y-3">
-                  <div>
-                    <span className="text-on-surface-variant font-semibold block mb-0.5">Offer Details</span>
-                    <span className="font-bold text-secondary text-headline-md">{campaign.offer}</span>
+                  <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <span className="font-semibold text-[#64748B] block mb-1">Retention Offer</span>
+                    <span className="text-base font-bold text-[#0D9488]">{campaign.offer}</span>
                   </div>
-                  <div>
-                    <span className="text-on-surface-variant font-semibold block mb-0.5">Action Strength</span>
-                    <span className="font-medium text-on-surface">{campaign.action_strength}</span>
+                  <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <span className="font-semibold text-[#64748B] block mb-1">Action Strength</span>
+                    <span className="font-bold text-[#172033]">{campaign.action_strength} Impact</span>
                   </div>
                 </div>
 
                 <div className="space-y-3">
-                  <div>
-                    <span className="text-on-surface-variant font-semibold block mb-0.5">Start Date</span>
-                    <span className="text-on-surface font-label-code">{campaign.start_date ? new Date(campaign.start_date).toLocaleDateString() : 'Immediate'}</span>
+                  <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <span className="font-semibold text-[#64748B] block mb-1">Start Date</span>
+                    <span className="font-medium text-[#172033]">
+                      {campaign.start_date ? formatDate(campaign.start_date) : 'Immediate Deploy'}
+                    </span>
                   </div>
-                  <div>
-                    <span className="text-on-surface-variant font-semibold block mb-0.5">End Date</span>
-                    <span className="text-on-surface font-label-code">{campaign.end_date ? new Date(campaign.end_date).toLocaleDateString() : 'Ongoing'}</span>
+                  <div className="p-3.5 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
+                    <span className="font-semibold text-[#64748B] block mb-1">End Date</span>
+                    <span className="font-medium text-[#172033]">
+                      {campaign.end_date ? formatDate(campaign.end_date) : 'Continuous (Until Revoked)'}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -168,4 +218,3 @@ export default function CampaignDetailPage() {
     </AppLayout>
   );
 }
-

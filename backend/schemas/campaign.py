@@ -32,6 +32,13 @@ class CampaignSimulationResponse(BaseModel):
     risk_score_reduction_pct: float
     before_distribution: dict
     after_distribution: dict
+    target_customer_count: Optional[int] = None
+    avg_risk_before: Optional[float] = None
+    avg_risk_after: Optional[float] = None
+    expected_risk_reduction_pct: Optional[float] = None
+    expected_saved_count: Optional[int] = None
+    risk_levels_before: Optional[dict] = None
+    risk_levels_after: Optional[dict] = None
 
 
 class CampaignResponse(BaseModel):

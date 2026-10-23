@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 @import url('https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&display=swap');
 @import 'leaflet/dist/leaflet.css';
 
@@ -13,45 +13,45 @@
   line-height: 1;
 }
 
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: #021425;
-  color: #d2e4fc;
+html, body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: #F8FAFC;
+  color: #172033;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
 }
 
-/* Material Design Ambient Glows and Glassmorphism */
-.glow-cyan {
-  box-shadow: 0 0 20px -3px rgba(68, 221, 254, 0.25);
-}
-
-.glow-primary {
-  box-shadow: 0 0 24px -2px rgba(59, 144, 255, 0.35);
-}
-
-.glow-red {
-  box-shadow: 0 0 20px -3px rgba(239, 68, 68, 0.2);
+/* Crisp Clean SaaS White Card Styles */
+.glow-cyan, .glow-primary, .glow-red {
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05), 0 1px 2px -1px rgba(0, 0, 0, 0.05);
 }
 
 .glass-panel {
-  background: rgba(10, 29, 46, 0.75);
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
-  border: 1px solid rgba(65, 71, 84, 0.4);
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.05);
 }
 
-/* Custom Scrollbar for Dark Surface */
+/* Subtle Modern Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #000f1f;
+  background: #F1F5F9;
 }
 ::-webkit-scrollbar-thumb {
-  background: #1a2b3d;
+  background: #CBD5E1;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #414754;
+  background: #94A3B8;
+}
+
+/* Leaflet Map Crisp Overrides */
+.leaflet-container {
+  font-family: 'Inter', sans-serif !important;
+  border-radius: 0.5rem;
+  z-index: 10;
 }

@@ -5,6 +5,26 @@ import { AppLayout } from '@/components/layout/AppLayout';
 import { useAuth } from '@/context/AuthContext';
 import { api } from '@/lib/api';
 import { CardSkeleton, TableSkeleton } from '@/components/common/Skeleton';
+import { KpiCard } from '@/components/common/KpiCard';
+import { RiskBadge } from '@/components/common/RiskBadge';
+import { EmptyState } from '@/components/common/EmptyState';
+import { safeArray, safeNumber, formatPct } from '@/lib/safeData';
+import type { CityData } from '@/components/common/MapComponent';
+import {
+  Users,
+  AlertTriangle,
+  Activity,
+  ShieldCheck,
+  TrendingUp,
+  MapPin,
+  ArrowRight,
+  ShieldAlert,
+  BarChart3,
+  Sparkles,
+  PieChart as PieIcon,
+  HelpCircle,
+  CheckCircle2,
+} from 'lucide-react';
 import {
   BarChart,
   Bar,
@@ -18,12 +38,12 @@ import {
   Cell,
   Legend,
   LineChart,
-  Line
+  Line,
 } from 'recharts';
 
 const MapComponent = dynamic(() => import('@/components/common/MapComponent'), { ssr: false });
 
-const RISK_COLORS = ['#44ddfe', '#f59e0b', '#ffb4ab'];
+const RISK_CHART_COLORS = ['#16A34A', '#D97706', '#DC2626'];
 
 export default function DashboardPage() {
   const { user, appType } = useAuth();
@@ -44,188 +64,189 @@ export default function DashboardPage() {
       const [ovRes, locRes, custRes] = await Promise.all([
         api.get('/analytics/overview', { params: { app_type: appType } }),
         api.get('/analytics/churn-by-location', { params: { app_type: appType } }),
-        api.get('/customers', { params: { app_type: appType, size: 6 } })
+        api.get('/customers', { params: { app_type: appType, size: 6 } }),
       ]);
-      setOverview(ovRes.data);
-      setLocationData(locRes.data);
-      setCustomers(custRes.data.items || []);
+      setOverview(ovRes.data || null);
+      setLocationData(locRes.data || null);
+      setCustomers(safeArray(custRes.data?.items));
     } catch (err: any) {
-      setError(err.response?.data?.detail || 'Failed to load dashboard telemetry data.');
+      console.error('Failed to load dashboard telemetry:', err);
+      setError(err.response?.data?.detail || 'Failed to load live dashboard telemetry.');
     } finally {
       setLoading(false);
     }
   };
 
-  const riskPieData = overview
+  const totalCustomers = safeNumber(overview?.total_customers, 0);
+  const highRiskCount = safeNumber(overview?.high_risk_count, 0);
+  const medRiskCount = safeNumber(overview?.medium_risk_count, 0);
+  const lowRiskCount = safeNumber(overview?.low_risk_count, 0);
+  const avgChurnProb = safeNumber(overview?.avg_churn_probability, 0);
+  const savedCount = safeNumber(locationData?.total_opportunity_save_count, 0);
+
+  // Retention rate calculation
+  const retentionRatePct = totalCustomers > 0
+    ? (((totalCustomers - highRiskCount) / totalCustomers) * 100).toFixed(1)
+    : '0.0';
+
+  // Risk Distribution Data for Donut Chart
+  const riskPieData = totalCustomers > 0
     ? [
-        { name: 'Low Risk', value: overview.low_risk_count },
-        { name: 'Medium Risk', value: overview.medium_risk_count },
-        { name: 'High Risk', value: overview.high_risk_count },
+        { name: 'Low Risk', value: lowRiskCount },
+        { name: 'Medium Risk', value: medRiskCount },
+        { name: 'High Risk', value: highRiskCount },
       ]
     : [];
 
-  const trendLineData = [
-    { month: 'Jan', churn_prob: 38 },
-    { month: 'Feb', churn_prob: 35 },
-    { month: 'Mar', churn_prob: 36 },
-    { month: 'Apr', churn_prob: 33 },
-    { month: 'May', churn_prob: 34 },
-    { month: 'Jun', churn_prob: overview ? Math.round(overview.average_churn_probability * 100) : 31 },
-  ];
+  // Locations array safely extracted
+  const locationsList = safeArray<CityData>(locationData?.locations);
+
+  // Top Churn Factors aggregated from location risk telemetry
+  const churnFactorsMap: Record<string, number> = {};
+  locationsList.forEach((loc: any) => {
+    if (loc?.top_reasons && typeof loc.top_reasons === 'object') {
+      Object.entries(loc.top_reasons).forEach(([reason, count]) => {
+        churnFactorsMap[reason] = (churnFactorsMap[reason] || 0) + (typeof count === 'number' ? count : 1);
+      });
+    }
+  });
+
+  const topChurnFactors = Object.entries(churnFactorsMap)
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([factor, count]) => ({ factor, count }));
+
+  // Churn trend / trajectory points based on actual risk tiers
+  const riskDistributionBarData = locationsList.slice(0, 6).map((l: any) => ({
+    city: l.city || 'Metro',
+    churn_rate: safeNumber(l.churn_percentage ?? l.churn_rate_pct, 0),
+    total: safeNumber(l.total_customers, 0),
+    vulnerable: safeNumber(l.churn_count ?? l.high_risk_customers, 0),
+  }));
 
   return (
-    <AppLayout title="Dashboard" subtitle="Executive Overview">
-      {/* Executive Greeting & Period Controls Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-outline-variant/20">
-        <div>
-          <h2 className="text-headline-xl font-headline-xl font-bold text-on-surface tracking-tight">
-            Good morning, {user?.full_name?.split(' ')[0] || 'Gokul'}
-          </h2>
-          <p className="text-body-md font-body-md text-on-surface-variant mt-0.5">
-            Here&apos;s what&apos;s happening with your customers today across{' '}
-            <span className="text-primary font-semibold">
-              {overview?.total_customers || 0} active accounts
-            </span>
-            .
-          </p>
+    <AppLayout title="Dashboard" subtitle="Customer Intelligence Overview">
+      <div className="space-y-6">
+        {/* Executive Header */}
+        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 pb-2 border-b border-[#E2E8F0]">
+          <div>
+            <h1 className="text-2xl font-bold text-[#172033] tracking-tight">
+              Customer Intelligence Overview
+            </h1>
+            <p className="text-sm text-[#64748B] mt-0.5">
+              Understand customer behaviour, identify churn risks, and take action to improve retention.
+            </p>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white border border-[#E2E8F0] shadow-subtle text-xs font-semibold text-[#172033]">
+              <span className="w-2 h-2 rounded-full bg-[#16A34A] animate-pulse"></span>
+              <span>Live Production Data</span>
+            </div>
+            <Link
+              href="/ai-insights"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-[#2563EB] text-white hover:bg-blue-700 font-semibold text-xs transition-all shadow-subtle active:scale-95"
+            >
+              <Sparkles className="w-4 h-4" />
+              <span>AI Action Brief</span>
+            </Link>
+          </div>
         </div>
 
-        <div className="flex items-center gap-3">
-          <div className="flex items-center bg-surface-container-lowest border border-outline-variant/40 rounded-lg p-1 text-body-sm">
-            <button className="px-3 py-1 rounded bg-surface-container-high text-primary font-medium shadow-sm">
-              Live Real-Time
+        {/* Error Alert */}
+        {error && (
+          <div className="p-4 rounded-xl bg-red-50 border border-red-200 text-red-700 flex items-center justify-between text-xs font-medium shadow-subtle">
+            <span>{error}</span>
+            <button
+              onClick={fetchDashboardData}
+              className="px-3 py-1 bg-[#DC2626] text-white rounded-md text-xs font-semibold hover:bg-red-700"
+            >
+              Retry
             </button>
           </div>
-          <Link
-            href="/ai-insights"
-            className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-gradient-to-r from-tertiary-container/30 to-secondary/20 border border-tertiary/40 text-on-surface hover:border-tertiary transition-all shadow-sm"
-          >
-            <span className="material-symbols-outlined text-tertiary text-[18px]">auto_awesome</span>
-            <span className="font-label-caps text-label-caps font-semibold">AI Synthesis</span>
-          </Link>
-        </div>
-      </div>
+        )}
 
-      {error && (
-        <div className="p-4 rounded-xl bg-error-container/20 border border-error/40 text-error text-body-sm font-body-sm">
-          {error}
-        </div>
-      )}
+        {/* KPI CARDS (Phase 5 Required: Total, High, Med, Low, Avg Churn Prob, Retention Rate, Customers Saved) */}
+        {loading ? (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+            <CardSkeleton />
+          </div>
+        ) : (
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
+            <KpiCard
+              title="Total Customers"
+              value={totalCustomers}
+              subtitle="Active Org Accounts"
+              icon={Users}
+              variant="blue"
+            />
+            <KpiCard
+              title="High-Risk"
+              value={highRiskCount}
+              subtitle="Require Win-Back"
+              icon={AlertTriangle}
+              variant="danger"
+            />
+            <KpiCard
+              title="Medium-Risk"
+              value={medRiskCount}
+              subtitle="Early Friction"
+              icon={Activity}
+              variant="warning"
+            />
+            <KpiCard
+              title="Low-Risk"
+              value={lowRiskCount}
+              subtitle="Healthy & Active"
+              icon={ShieldCheck}
+              variant="success"
+            />
+            <KpiCard
+              title="Avg Churn Prob"
+              value={`${(avgChurnProb * 100).toFixed(1)}%`}
+              subtitle="ML Risk Predictor"
+              icon={TrendingUp}
+              variant="default"
+            />
+            <KpiCard
+              title="Retention Rate"
+              value={`${retentionRatePct}%`}
+              subtitle={savedCount > 0 ? `${savedCount} Rescuable` : 'Current Cohort'}
+              icon={CheckCircle2}
+              variant="success"
+            />
+          </div>
+        )}
 
-      {loading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
-          <CardSkeleton />
-          <CardSkeleton />
-          <CardSkeleton />
-          <CardSkeleton />
-        </div>
-      ) : (
-        <>
-          {/* KPI CARDS ROW (4 High-Impact Metric Cards) */}
-          <section className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-space-md">
-            {/* Metric 1: Total Customers */}
-            <div className="glass-panel p-space-lg rounded-xl flex flex-col justify-between hover:border-primary/40 transition-all group">
-              <div className="flex items-center justify-between">
-                <span className="text-label-caps font-label-caps text-outline uppercase tracking-wider">
-                  Total Customers
-                </span>
-                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-primary group-hover:bg-primary/20 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">groups</span>
-                </div>
+        {/* SECTION 1 & 2: Customer Risk Distribution & Regional Risk Breakdown */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          {/* Section 1: Customer Risk Distribution (Donut Chart) */}
+          <div className="lg:col-span-5 bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+              <div>
+                <h3 className="font-bold text-base text-[#172033] flex items-center gap-2">
+                  <PieIcon className="w-5 h-5 text-[#2563EB]" />
+                  Customer Risk Distribution
+                </h3>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  Multi-factor categorization across low, medium, and high churn probability.
+                </p>
               </div>
-              <div className="mt-3">
-                <div className="text-data-metric font-data-metric text-on-surface font-bold tracking-tight">
-                  {overview?.total_customers || 0}
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="inline-flex items-center text-[11px] font-label-code text-secondary font-semibold">
-                    <span className="material-symbols-outlined text-[14px]">trending_up</span> Active Base
-                  </span>
-                </div>
-              </div>
+              <span className="text-[11px] font-bold text-[#2563EB] bg-[#EFF6FF] px-2 py-0.5 rounded border border-[#BFDBFE]">
+                LIVE COHORT
+              </span>
             </div>
 
-            {/* Metric 2: High Risk Customers */}
-            <div className="glass-panel p-space-lg rounded-xl flex flex-col justify-between border-error/30 hover:border-error/60 transition-all group relative overflow-hidden glow-red">
-              <div className="flex items-center justify-between">
-                <span className="text-label-caps font-label-caps text-error uppercase tracking-wider">
-                  High Risk Cohort
-                </span>
-                <div className="w-8 h-8 rounded-lg bg-error-container/40 flex items-center justify-center text-error group-hover:bg-error-container/70 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">warning</span>
-                </div>
+            {totalCustomers === 0 ? (
+              <div className="py-16 text-center text-xs text-[#64748B]">
+                No customer records available to compute risk distribution.
               </div>
-              <div className="mt-3">
-                <div className="text-data-metric font-data-metric text-error font-bold tracking-tight">
-                  {overview?.high_risk_count || 0}
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="inline-flex items-center text-[11px] font-label-code text-error font-semibold">
-                    Immediate Action Needed
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Metric 3: Average Churn Probability */}
-            <div className="glass-panel p-space-lg rounded-xl flex flex-col justify-between hover:border-primary/40 transition-all group">
-              <div className="flex items-center justify-between">
-                <span className="text-label-caps font-label-caps text-outline uppercase tracking-wider">
-                  Avg Churn Probability
-                </span>
-                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary group-hover:bg-secondary/20 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">monitoring</span>
-                </div>
-              </div>
-              <div className="mt-3">
-                <div className="text-data-metric font-data-metric text-on-surface font-bold tracking-tight">
-                  {((overview?.average_churn_probability || 0) * 100).toFixed(1)}%
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="inline-flex items-center text-[11px] font-label-code text-secondary font-semibold">
-                    Logistic Regression ML
-                  </span>
-                </div>
-              </div>
-            </div>
-
-            {/* Metric 4: Top Churn City */}
-            <div className="glass-panel p-space-lg rounded-xl flex flex-col justify-between hover:border-secondary/40 transition-all group">
-              <div className="flex items-center justify-between">
-                <span className="text-label-caps font-label-caps text-outline uppercase tracking-wider">
-                  Top Risk City
-                </span>
-                <div className="w-8 h-8 rounded-lg bg-surface-container-high flex items-center justify-center text-secondary group-hover:bg-secondary/20 transition-colors">
-                  <span className="material-symbols-outlined text-[18px]">location_on</span>
-                </div>
-              </div>
-              <div className="mt-3">
-                <div className="text-headline-lg font-headline-lg text-secondary font-bold tracking-tight truncate">
-                  {locationData?.highest_churn_city || 'N/A'}
-                </div>
-                <div className="flex items-center gap-1.5 mt-1">
-                  <span className="px-1.5 py-0.5 rounded bg-secondary/15 text-secondary border border-secondary/30 text-[10px] font-label-code font-semibold">
-                    Highest Concentration
-                  </span>
-                </div>
-              </div>
-            </div>
-          </section>
-
-          {/* MIDDLE ANALYTICS SECTION (Donut + Churn Trajectory) */}
-          <section className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-            {/* Card 1: Customer Risk Overview (Donut Chart) - 5 cols */}
-            <div className="lg:col-span-5 glass-panel p-space-lg rounded-xl flex flex-col justify-between space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
-                <div>
-                  <h3 className="text-headline-md font-headline-md font-semibold text-on-surface">
-                    Customer Risk Breakdown
-                  </h3>
-                  <p className="text-body-sm font-body-sm text-on-surface-variant">Categorized by Risk Engine</p>
-                </div>
-                <span className="text-label-code font-label-code text-secondary text-xs">ML + Business Rules</span>
-              </div>
-
+            ) : (
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
@@ -238,151 +259,226 @@ export default function DashboardPage() {
                       paddingAngle={4}
                       dataKey="value"
                     >
-                      {riskPieData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={RISK_COLORS[index % RISK_COLORS.length]} />
+                      {riskPieData.map((_, index) => (
+                        <Cell key={`cell-${index}`} fill={RISK_CHART_COLORS[index % RISK_CHART_COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#0a1d2e',
-                        borderColor: '#414754',
-                        color: '#d2e4fc',
+                        backgroundColor: '#FFFFFF',
+                        borderColor: '#E2E8F0',
+                        color: '#172033',
                         borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.08)',
+                        fontSize: '12px',
                       }}
                     />
-                    <Legend verticalAlign="bottom" height={36} />
+                    <Legend
+                      verticalAlign="bottom"
+                      height={36}
+                      formatter={(val) => <span className="text-xs text-[#172033] font-medium">{val}</span>}
+                    />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
+            )}
+          </div>
+
+          {/* Section 2: Regional Churn Rate Breakdown */}
+          <div className="lg:col-span-7 bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card flex flex-col justify-between space-y-4">
+            <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+              <div>
+                <h3 className="font-bold text-base text-[#172033] flex items-center gap-2">
+                  <BarChart3 className="w-5 h-5 text-[#0D9488]" />
+                  Churn Risk by Metro Region
+                </h3>
+                <p className="text-xs text-[#64748B] mt-0.5">
+                  Actual churn percentage across major Indian operations.
+                </p>
+              </div>
+              {locationData?.highest_churn_city && (
+                <span className="text-[11px] font-bold text-[#DC2626] bg-red-50 px-2 py-0.5 rounded border border-red-200">
+                  Critical: {locationData.highest_churn_city}
+                </span>
+              )}
             </div>
 
-            {/* Card 2: Churn Probability Trajectory (Line Chart) - 7 cols */}
-            <div className="lg:col-span-7 glass-panel p-space-lg rounded-xl flex flex-col justify-between space-y-4">
-              <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
-                <div>
-                  <h3 className="text-headline-md font-headline-md font-semibold text-on-surface">
-                    Churn Probability Trend
-                  </h3>
-                  <p className="text-body-sm font-body-sm text-on-surface-variant">Historical cohort risk trajectory</p>
-                </div>
-                <span className="text-label-code font-label-code text-secondary text-xs font-bold">-2.1% Improved</span>
+            {riskDistributionBarData.length === 0 ? (
+              <div className="py-16 text-center text-xs text-[#64748B]">
+                No regional location analytics available.
               </div>
-
+            ) : (
               <div className="h-64 w-full">
                 <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={trendLineData}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#253648" />
-                    <XAxis dataKey="month" stroke="#8b919f" />
-                    <YAxis stroke="#8b919f" unit="%" />
+                  <BarChart data={riskDistributionBarData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#F1F5F9" />
+                    <XAxis dataKey="city" stroke="#64748B" fontSize={11} tickLine={false} />
+                    <YAxis stroke="#64748B" fontSize={11} tickLine={false} unit="%" />
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#0a1d2e',
-                        borderColor: '#414754',
-                        color: '#d2e4fc',
+                        backgroundColor: '#FFFFFF',
+                        borderColor: '#E2E8F0',
+                        color: '#172033',
                         borderRadius: '8px',
+                        boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.08)',
+                        fontSize: '12px',
                       }}
+                      formatter={(val: any) => [`${val}%`, 'Churn Rate']}
                     />
-                    <Line
-                      type="monotone"
-                      dataKey="churn_prob"
-                      stroke="#44ddfe"
-                      strokeWidth={3}
-                      dot={{ fill: '#44ddfe', r: 5 }}
-                    />
-                  </LineChart>
+                    <Bar dataKey="churn_rate" fill="#2563EB" radius={[4, 4, 0, 0]} name="Churn Rate %" />
+                  </BarChart>
                 </ResponsiveContainer>
               </div>
-            </div>
-          </section>
-
-          {/* INDIAN CITY CHURN GEO MAP */}
-          <section className="glass-panel p-space-lg rounded-xl space-y-4">
-            <div className="flex items-center justify-between">
-              <div>
-                <h3 className="text-headline-md font-headline-md font-semibold text-on-surface flex items-center gap-2">
-                  <span className="material-symbols-outlined text-secondary">map</span>
-                  Indian Cities Geo-Spatial Churn Distribution
-                </h3>
-                <p className="text-body-sm font-body-sm text-on-surface-variant">
-                  Interactive spatial density and risk clustering across 118 Indian cities.
-                </p>
-              </div>
-            </div>
-
-            {locationData?.cities && locationData.cities.length > 0 ? (
-              <MapComponent cities={locationData.cities} />
-            ) : (
-              <div className="py-12 text-center text-on-surface-variant text-body-sm">
-                No location telemetry available.
-              </div>
             )}
-          </section>
+          </div>
+        </div>
 
-          {/* PRIORITY HIGH RISK CUSTOMER TABLE */}
-          <section className="glass-panel p-space-lg rounded-xl space-y-4">
-            <div className="flex items-center justify-between pb-3 border-b border-outline-variant/30">
-              <div>
-                <h3 className="text-headline-md font-headline-md font-semibold text-on-surface flex items-center gap-2">
-                  <span className="material-symbols-outlined text-error">priority_high</span>
-                  Priority High-Risk Accounts Roster
-                </h3>
-                <p className="text-body-sm font-body-sm text-on-surface-variant">
-                  Accounts requiring immediate retention intervention
-                </p>
-              </div>
+        {/* SECTION 3: Top Churn Factors */}
+        <div className="bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-[#E2E8F0]">
+            <div>
+              <h3 className="font-bold text-base text-[#172033] flex items-center gap-2">
+                <ShieldAlert className="w-5 h-5 text-[#DC2626]" />
+                Top Churn Factors
+              </h3>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                Primary friction triggers identified across active user behavioral logs.
+              </p>
+            </div>
+            <Link
+              href="/retention"
+              className="text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1"
+            >
+              <span>View Retention Playbooks</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
 
-              <Link
-                href="/customers"
-                className="text-body-sm font-body-sm text-secondary hover:text-on-surface font-semibold transition-colors"
-              >
-                View Full Customer Directory &rarr;
-              </Link>
+          {topChurnFactors.length === 0 ? (
+            <div className="py-8 text-center text-xs text-[#64748B]">
+              No acute churn friction points recorded for this cohort.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+              {topChurnFactors.map((item, idx) => (
+                <div
+                  key={idx}
+                  className="p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0] flex items-start gap-3 hover:border-slate-300 transition-colors"
+                >
+                  <span className="w-6 h-6 rounded-md bg-[#FEE2E2] text-[#DC2626] font-bold text-xs flex items-center justify-center shrink-0">
+                    {idx + 1}
+                  </span>
+                  <div className="min-w-0 flex-1">
+                    <h4 className="text-xs font-bold text-[#172033] leading-snug">{item.factor}</h4>
+                    <p className="text-[11px] text-[#64748B] mt-0.5">
+                      Affecting {item.count} regional accounts
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+
+        {/* SECTION 4: Churn by Location (Geo Map) */}
+        <div className="bg-white p-6 rounded-xl border border-[#E2E8F0] shadow-card space-y-4">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-[#E2E8F0]">
+            <div>
+              <h3 className="font-bold text-base text-[#172033] flex items-center gap-2">
+                <MapPin className="w-5 h-5 text-[#0D9488]" />
+                Indian Cities Geo-Spatial Churn Distribution
+              </h3>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                Interactive spatial density and risk clustering across Indian operating cities.
+              </p>
             </div>
 
+            <div className="flex items-center gap-3 text-xs font-medium text-[#64748B]">
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#16A34A]" /> Low Risk
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#D97706]" /> Med Risk
+              </span>
+              <span className="flex items-center gap-1.5">
+                <span className="w-2.5 h-2.5 rounded-full bg-[#DC2626]" /> High Risk
+              </span>
+            </div>
+          </div>
+
+          {locationsList.length > 0 ? (
+            <MapComponent cities={locationsList} height="400px" />
+          ) : (
+            <div className="py-16 text-center text-xs text-[#64748B]">
+              No location coordinate data available for current accounts.
+            </div>
+          )}
+        </div>
+
+        {/* SECTION 5: Priority Customers Table */}
+        <div className="bg-white rounded-xl border border-[#E2E8F0] shadow-card overflow-hidden">
+          <div className="p-6 border-b border-[#E2E8F0] flex items-center justify-between">
+            <div>
+              <h3 className="font-bold text-base text-[#172033]">
+                Priority Customers Requiring Intervention
+              </h3>
+              <p className="text-xs text-[#64748B] mt-0.5">
+                Accounts exhibiting high ML churn probability and critical score levels.
+              </p>
+            </div>
+            <Link
+              href="/customers"
+              className="text-xs font-semibold text-[#2563EB] hover:underline flex items-center gap-1"
+            >
+              <span>View All Customers</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </Link>
+          </div>
+
+          {customers.length === 0 ? (
+            <div className="p-12 text-center text-xs text-[#64748B]">
+              No customer profiles found.
+            </div>
+          ) : (
             <div className="overflow-x-auto">
-              <table className="w-full text-left text-body-sm border-collapse">
-                <thead>
-                  <tr className="border-b border-outline-variant/30 text-label-caps font-label-caps text-on-surface-variant uppercase">
-                    <th className="py-3 px-4">Customer ID</th>
-                    <th className="py-3 px-4">City</th>
-                    <th className="py-3 px-4">Subscription</th>
-                    <th className="py-3 px-4">Churn Prob</th>
-                    <th className="py-3 px-4">Risk Level</th>
-                    <th className="py-3 px-4 text-right">Action</th>
+              <table className="w-full text-left text-xs">
+                <thead className="bg-[#F8FAFC] text-[#64748B] font-semibold uppercase tracking-wider border-b border-[#E2E8F0]">
+                  <tr>
+                    <th className="px-5 py-3.5">Customer Code</th>
+                    <th className="px-5 py-3.5">Location</th>
+                    <th className="px-5 py-3.5">Plan Tier</th>
+                    <th className="px-5 py-3.5">Activity Days</th>
+                    <th className="px-5 py-3.5">Churn Probability</th>
+                    <th className="px-5 py-3.5">Risk Score</th>
+                    <th className="px-5 py-3.5">Risk Severity</th>
+                    <th className="px-5 py-3.5 text-right">Action</th>
                   </tr>
                 </thead>
-                <tbody className="divide-y divide-outline-variant/20 text-on-surface">
+                <tbody className="divide-y divide-[#E2E8F0]">
                   {customers.map((c) => (
-                    <tr key={c.id} className="hover:bg-surface-container/60 transition-colors">
-                      <td className="py-3 px-4 font-label-code font-bold text-primary">{c.customer_code}</td>
-                      <td className="py-3 px-4">{c.city}</td>
-                      <td className="py-3 px-4">
-                        <span className="px-2 py-0.5 rounded bg-surface-container-high text-on-surface border border-outline-variant/40 text-label-code">
-                          {c.subscription_type}
-                        </span>
+                    <tr key={c.id} className="hover:bg-[#F8FAFC] transition-colors">
+                      <td className="px-5 py-3.5 font-bold text-[#172033]">
+                        {c.customer_code}
                       </td>
-                      <td className="py-3 px-4 font-label-code font-bold text-secondary">
-                        {(c.churn_probability * 100).toFixed(1)}%
+                      <td className="px-5 py-3.5 text-[#64748B] font-medium">{c.city || 'N/A'}</td>
+                      <td className="px-5 py-3.5 text-[#64748B] font-medium">{c.subscription_type || 'Free'}</td>
+                      <td className="px-5 py-3.5 text-[#172033] font-mono">{c.login_days || 0} days</td>
+                      <td className="px-5 py-3.5 font-bold text-[#172033]">
+                        {(safeNumber(c.churn_probability, 0) * 100).toFixed(1)}%
                       </td>
-                      <td className="py-3 px-4">
-                        <span
-                          className={`px-2.5 py-1 rounded-full text-label-caps font-label-caps font-bold border ${
-                            c.risk_level === 'High Risk'
-                              ? 'bg-error-container/40 text-error border-error/40'
-                              : c.risk_level === 'Medium Risk'
-                              ? 'bg-amber-500/20 text-amber-300 border-amber-500/30'
-                              : 'bg-secondary-container/20 text-secondary border-secondary/30'
-                          }`}
-                        >
-                          {c.risk_level}
-                        </span>
+                      <td className="px-5 py-3.5 font-bold text-[#172033]">
+                        {c.risk_score} <span className="text-[#64748B] font-normal">/ 100</span>
                       </td>
-                      <td className="py-3 px-4 text-right">
+                      <td className="px-5 py-3.5">
+                        <RiskBadge level={c.risk_level} size="sm" />
+                      </td>
+                      <td className="px-5 py-3.5 text-right">
                         <Link
                           href={`/customers/${c.id}`}
-                          className="px-3 py-1 rounded bg-surface-container-high hover:bg-secondary/20 hover:text-secondary text-body-sm font-semibold transition-colors inline-block"
+                          className="inline-flex items-center gap-1 px-2.5 py-1 rounded-md bg-[#EFF6FF] text-[#2563EB] hover:bg-blue-100 font-semibold text-xs transition-colors border border-[#BFDBFE]"
                         >
-                          Inspect Profile
+                          <span>Profile 360</span>
+                          <ArrowRight className="w-3 h-3" />
                         </Link>
                       </td>
                     </tr>
@@ -390,9 +486,9 @@ export default function DashboardPage() {
                 </tbody>
               </table>
             </div>
-          </section>
-        </>
-      )}
+          )}
+        </div>
+      </div>
     </AppLayout>
   );
 }

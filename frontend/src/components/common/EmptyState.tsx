@@ -16,16 +16,16 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
   icon: Icon = FolderOpen,
 }) => (
-  <div className="p-12 text-center rounded-xl bg-slate-900 border border-slate-800 space-y-3">
-    <div className="w-12 h-12 rounded-2xl bg-slate-800/80 border border-slate-700/60 flex items-center justify-center text-slate-400 mx-auto">
-      <Icon className="w-6 h-6 text-slate-400" />
+  <div className="p-12 text-center rounded-xl bg-white border border-[#E2E8F0] shadow-card space-y-3">
+    <div className="w-12 h-12 rounded-xl bg-[#EFF6FF] border border-[#BFDBFE] flex items-center justify-center text-[#2563EB] mx-auto shadow-subtle">
+      <Icon className="w-6 h-6 text-[#2563EB]" />
     </div>
-    <h3 className="text-base font-bold text-white tracking-tight">{title}</h3>
-    <p className="text-slate-400 text-xs max-w-md mx-auto leading-relaxed">{description}</p>
+    <h3 className="text-base font-bold text-[#172033] tracking-tight">{title}</h3>
+    <p className="text-[#64748B] text-xs max-w-md mx-auto leading-relaxed">{description}</p>
     {actionText && onAction && (
       <button
         onClick={onAction}
-        className="mt-3 inline-flex items-center px-4 py-2 bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs rounded-xl shadow-lg shadow-emerald-600/20 transition-all"
+        className="mt-3 inline-flex items-center px-4 py-2 bg-[#2563EB] hover:bg-blue-700 text-white font-semibold text-xs rounded-lg shadow-sm transition-all active:scale-95"
       >
         {actionText}
       </button>

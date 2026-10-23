@@ -46,7 +46,14 @@ def simulate_campaign_impact(customers: List[dict], app_type: str, action: str, 
             "simulated_avg_risk_score": 0.0,
             "risk_score_reduction_pct": 0.0,
             "before_distribution": {"HIGH": 0, "MEDIUM": 0, "LOW": 0},
-            "after_distribution": {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
+            "after_distribution": {"HIGH": 0, "MEDIUM": 0, "LOW": 0},
+            "target_customer_count": 0,
+            "avg_risk_before": 0.0,
+            "avg_risk_after": 0.0,
+            "expected_risk_reduction_pct": 0.0,
+            "expected_saved_count": 0,
+            "risk_levels_before": {"High Risk": 0, "Medium Risk": 0, "Low Risk": 0},
+            "risk_levels_after": {"High Risk": 0, "Medium Risk": 0, "Low Risk": 0}
         }
 
     # Determine reduction percentage based on action strength
@@ -98,6 +105,17 @@ def simulate_campaign_impact(customers: List[dict], app_type: str, action: str, 
     avg_after = float(sum(after_scores) / len(after_scores)) if after_scores else 0.0
     overall_reduction = float(((avg_before - avg_after) / avg_before) * 100.0) if avg_before > 0 else 0.0
 
+    risk_levels_before = {
+        "High Risk": before_dist["HIGH"],
+        "Medium Risk": before_dist["MEDIUM"],
+        "Low Risk": before_dist["LOW"]
+    }
+    risk_levels_after = {
+        "High Risk": after_dist["HIGH"],
+        "Medium Risk": after_dist["MEDIUM"],
+        "Low Risk": after_dist["LOW"]
+    }
+
     return {
         "action": action,
         "strength": strength,
@@ -109,5 +127,12 @@ def simulate_campaign_impact(customers: List[dict], app_type: str, action: str, 
         "simulated_avg_risk_score": round(avg_after, 1),
         "risk_score_reduction_pct": round(overall_reduction, 1),
         "before_distribution": before_dist,
-        "after_distribution": after_dist
+        "after_distribution": after_dist,
+        "target_customer_count": len(customers),
+        "avg_risk_before": round(avg_before, 1),
+        "avg_risk_after": round(avg_after, 1),
+        "expected_risk_reduction_pct": round(overall_reduction, 1),
+        "expected_saved_count": saved_count,
+        "risk_levels_before": risk_levels_before,
+        "risk_levels_after": risk_levels_after
     }
