@@ -4,10 +4,17 @@ from backend.models.customer import Customer
 from backend.models.event import CustomerEvent
 from backend.models.prediction import Prediction, RiskScore
 from backend.models.retention import RetentionRecommendation
-from backend.models.campaign import Campaign, CampaignResult, CampaignStatus
+from backend.models.campaign import Campaign, CampaignResult, CampaignStatus, CampaignRecipient, RecipientStatus
 from backend.models.dataset import UploadedDataset
 from backend.models.model import ModelVersion
 from backend.models.audit import AuditLog
+from backend.models.budget_waste import (
+    BudgetWasteOpportunity,
+    WasteCategory,
+    WasteReviewStatus,
+    EvidenceStrength,
+    DataSufficiency
+)
 
 __all__ = [
     "Organization",
@@ -21,7 +28,14 @@ __all__ = [
     "Campaign",
     "CampaignResult",
     "CampaignStatus",
+    "CampaignRecipient",
+    "RecipientStatus",
     "UploadedDataset",
     "ModelVersion",
-    "AuditLog"
+    "AuditLog",
+    "BudgetWasteOpportunity",
+    "WasteCategory",
+    "WasteReviewStatus",
+    "EvidenceStrength",
+    "DataSufficiency"
 ]

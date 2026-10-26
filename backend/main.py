@@ -3,9 +3,10 @@ from fastapi.middleware.cors import CORSMiddleware
 from backend.core.config import settings
 from backend.api.v1.api import api_router
 from backend.db.session import engine, Base
+from backend.db.migrations import run_schema_migrations
 
-# Auto-create tables for local execution
-Base.metadata.create_all(bind=engine)
+# Auto-create tables and apply column migrations for local execution
+run_schema_migrations()
 
 app = FastAPI(
     title=settings.PROJECT_NAME,

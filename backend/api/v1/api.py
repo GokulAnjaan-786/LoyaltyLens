@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-from backend.api.v1.endpoints import auth, customers, predictions, analytics, retention, campaigns, ai_insights, admin
+from backend.api.v1.endpoints import auth, customers, predictions, analytics, retention, campaigns, ai_insights, admin, budget_waste
 
 api_router = APIRouter()
 
@@ -9,5 +9,6 @@ api_router.include_router(predictions.router, prefix="/predictions", tags=["Pred
 api_router.include_router(analytics.router, prefix="/analytics", tags=["Analytics"])
 api_router.include_router(retention.router, prefix="/retention", tags=["Retention"])
 api_router.include_router(campaigns.router, prefix="/campaigns", tags=["Campaigns"])
+api_router.include_router(budget_waste.router, prefix="/campaigns/budget-intelligence", tags=["Retention Budget Intelligence"])
 api_router.include_router(ai_insights.router, prefix="/ai", tags=["AI Insights"])
 api_router.include_router(admin.router, prefix="/admin", tags=["Admin & Developer"])
